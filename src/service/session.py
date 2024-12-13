@@ -67,11 +67,11 @@ class SessionService:
         try:
             async with httpx.AsyncClient() as client:
                 # 비동기 작업 생성
-                tasks = {db_name: client.get(url) for db_name, url in urls.items()}
+                tasks = {db_name: client.get(url, headers=headers) for db_name, url in urls.items()}
                 self.logger.debug(f"Created async tasks for {len(tasks)} URLs")
 
                 # 예외를 반환하도록 설정
-                responses = await asyncio.gather(*tasks.values(), headers=headers, return_exceptions=True)
+                responses = await asyncio.gather(*tasks.values(), return_exceptions=True)
                 
                 # 성공적인 응답과 에러를 분리
                 successful_responses = {}
