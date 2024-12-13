@@ -102,3 +102,6 @@
 [2024-12-13 16:09:25,305] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
 [2024-12-13 16:11:36,293] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
 [2024-12-13 16:12:29,504] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 17:29:38,280] [ERROR] [app.service.SessionService:104] - Critical error: gather() got an unexpected keyword argument 'headers'
+[2024-12-13 17:29:41,280] [ERROR] [app.service.SessionService:104] - Critical error: gather() got an unexpected keyword argument 'headers'
+[2024-12-13 17:31:32,969] [ERROR] [app.service.SessionService:104] - Critical error: gather() got an unexpected keyword argument 'headers'
