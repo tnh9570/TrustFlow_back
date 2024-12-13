@@ -1,0 +1,50 @@
+# Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc 
+
+# VSCode settings
+.vscode/
+
+# Windows specific files
+Thumbs.db
+ehthumbs.db
+
+# Virtual Environment
+venv/
+env/
+ENV/
+*.env
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# PyInstaller
+*.spec
+
+# mypy
+.mypy_cache/
+
+# pytest
+.cache/
+
+# Coverage
+.coverage
+.coverage.*
+*.coveragerc
+
+# Pytest, Unittest, and other testing caches
+nosetests.xml
+test-results/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# VSCode recommended extensions (optional)
+.vscode/extensions.json
+
+*explorer*
+*creature*

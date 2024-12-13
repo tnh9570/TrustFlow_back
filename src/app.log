@@ -1,0 +1,104 @@
+[2024-12-12 16:51:27,868] [INFO] [app.data.deployments:94] - Deployment inserted successfully. hospital_id=c00054, reservation_time=2024-12-12 14:30:00, version_id=1
+[2024-12-12 16:52:31,260] [ERROR] [app.data.deployments:99] - (1452, 'Cannot add or update a child row: a foreign key constraint fails (`medichis_deployment`.`deployments`, CONSTRAINT `fk_version` FOREIGN KEY (`versionId`) REFERENCES `deployVersions` (`versionId`) ON DELETE CASCADE)')
+[2024-12-12 17:10:28,546] [INFO] [app.data.deployments:94] - Deployment inserted successfully. hospital_id=c00054, reservation_time=2024-12-12 14:30:00, version_id=1
+[2024-12-13 12:15:27,903] [ERROR] [app.service.SessionService:39] - [Errno 11001] getaddrinfo failed
+[2024-12-13 12:15:28,334] [ERROR] [app.service.SessionService:39] - [Errno 11001] getaddrinfo failed
+[2024-12-13 12:15:28,907] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:29,466] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:29,975] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:30,433] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:30,900] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:31,345] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:31,829] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:32,348] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:32,828] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:33,332] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:33,865] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:34,404] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:34,917] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:35,396] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:35,983] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:36,409] [ERROR] [app.service.SessionService:39] - [Errno 11001] getaddrinfo failed
+[2024-12-13 12:15:36,940] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:37,433] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:38,010] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:38,573] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:40,143] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:40,763] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:41,345] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:15:41,764] [ERROR] [app.service.SessionService:39] - [Errno 11001] getaddrinfo failed
+[2024-12-13 12:15:42,300] [ERROR] [app.service.SessionService:39] - 'Response' object has no attribute 'data'
+[2024-12-13 12:26:48,767] [ERROR] [app.service.SessionService:41] - https://amelia2.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 12:26:49,242] [ERROR] [app.service.SessionService:41] - https://c00002.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 12:26:49,876] [ERROR] [app.service.SessionService:41] - https://c00032.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:50,428] [ERROR] [app.service.SessionService:41] - https://c00033.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:50,884] [ERROR] [app.service.SessionService:41] - https://c00034.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:51,357] [ERROR] [app.service.SessionService:41] - https://c00051.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:51,937] [ERROR] [app.service.SessionService:41] - https://c00052.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:52,423] [ERROR] [app.service.SessionService:41] - https://c00053.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:52,859] [ERROR] [app.service.SessionService:41] - https://c00054.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:53,320] [ERROR] [app.service.SessionService:41] - https://c00055.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:53,786] [ERROR] [app.service.SessionService:41] - https://c00057.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:54,357] [ERROR] [app.service.SessionService:41] - https://c00065.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:54,894] [ERROR] [app.service.SessionService:41] - https://c00066.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:55,390] [ERROR] [app.service.SessionService:41] - https://c00068.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:55,855] [ERROR] [app.service.SessionService:41] - https://c00069.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:56,368] [ERROR] [app.service.SessionService:41] - https://c00070.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:56,814] [ERROR] [app.service.SessionService:41] - https://c00071.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:57,224] [ERROR] [app.service.SessionService:41] - https://c00072.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 12:26:57,702] [ERROR] [app.service.SessionService:41] - https://c00075.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:58,137] [ERROR] [app.service.SessionService:41] - https://c00076.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:58,614] [ERROR] [app.service.SessionService:41] - https://c00077.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:59,072] [ERROR] [app.service.SessionService:41] - https://c00078.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:26:59,509] [ERROR] [app.service.SessionService:41] - https://c00079.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:27:00,056] [ERROR] [app.service.SessionService:41] - https://c00080.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:27:00,562] [ERROR] [app.service.SessionService:41] - https://c00081.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 12:27:01,049] [ERROR] [app.service.SessionService:41] - https://amelia2.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 12:27:01,607] [ERROR] [app.service.SessionService:41] - https://c00082.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:21,120] [ERROR] [app.service.SessionService:41] - https://amelia2.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 14:19:21,555] [ERROR] [app.service.SessionService:41] - https://c00002.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 14:19:22,052] [ERROR] [app.service.SessionService:41] - https://c00032.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:23,518] [ERROR] [app.service.SessionService:41] - https://c00033.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:23,980] [ERROR] [app.service.SessionService:41] - https://c00034.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:24,441] [ERROR] [app.service.SessionService:41] - https://c00051.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:24,921] [ERROR] [app.service.SessionService:41] - https://c00052.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:25,386] [ERROR] [app.service.SessionService:41] - https://c00053.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:25,875] [ERROR] [app.service.SessionService:41] - https://c00054.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:26,383] [ERROR] [app.service.SessionService:41] - https://c00055.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:26,863] [ERROR] [app.service.SessionService:41] - https://c00057.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:27,356] [ERROR] [app.service.SessionService:41] - https://c00065.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:27,852] [ERROR] [app.service.SessionService:41] - https://c00066.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:28,374] [ERROR] [app.service.SessionService:41] - https://c00068.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:28,857] [ERROR] [app.service.SessionService:41] - https://c00069.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:29,371] [ERROR] [app.service.SessionService:41] - https://c00070.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:29,854] [ERROR] [app.service.SessionService:41] - https://c00071.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:30,269] [ERROR] [app.service.SessionService:41] - https://c00072.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 14:19:30,836] [ERROR] [app.service.SessionService:41] - https://c00075.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:31,321] [ERROR] [app.service.SessionService:41] - https://c00076.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:31,795] [ERROR] [app.service.SessionService:41] - https://c00077.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:32,386] [ERROR] [app.service.SessionService:41] - https://c00078.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:32,916] [ERROR] [app.service.SessionService:41] - https://c00079.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:33,447] [ERROR] [app.service.SessionService:41] - https://c00080.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:33,976] [ERROR] [app.service.SessionService:41] - https://c00081.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:19:34,407] [ERROR] [app.service.SessionService:41] - https://amelia2.medichis.com/internal/customer : [Errno 11001] getaddrinfo failed
+[2024-12-13 14:19:34,898] [ERROR] [app.service.SessionService:41] - https://c00082.medichis.com/internal/customer : 'Response' object has no attribute 'data'
+[2024-12-13 14:25:16,641] [ERROR] [app.service.SessionService:43] - asyncio.tasks.gather() argument after ** must be a mapping, not list
+[2024-12-13 14:30:34,644] [ERROR] [app.service.SessionService:43] - asyncio.tasks.gather() argument after ** must be a mapping, not list
+[2024-12-13 14:31:01,002] [ERROR] [app.service.SessionService:43] - Request URL is missing an 'http://' or 'https://' protocol.
+[2024-12-13 14:31:55,660] [ERROR] [app.service.SessionService:44] - [Errno 11001] getaddrinfo failed
+[2024-12-13 15:49:48,819] [ERROR] [app.service.SessionService:44] - [Errno 11001] getaddrinfo failed
+[2024-12-13 15:54:04,161] [ERROR] [app.service.SessionService:70] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 15:54:35,039] [ERROR] [app.service.SessionService:70] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 15:57:01,843] [ERROR] [app.service.SessionService:73] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 16:00:28,968] [ERROR] [app.service.SessionService:73] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 16:00:35,487] [ERROR] [app.service.SessionService:73] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 16:01:19,055] [ERROR] [app.service.SessionService:73] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:02:26,030] [ERROR] [app.service.SessionService:74] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:03:38,738] [ERROR] [app.service.SessionService:74] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:05:18,972] [ERROR] [app.service.SessionService:74] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:05:26,849] [ERROR] [app.service.SessionService:74] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:07:34,427] [ERROR] [app.service.SessionService:76] - Critical error: 'ConnectError' object has no attribute 'json'
+[2024-12-13 16:08:11,294] [ERROR] [app.service.SessionService:76] - Critical error: 'Response' object is not subscriptable
+[2024-12-13 16:09:25,305] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 16:11:36,293] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
+[2024-12-13 16:12:29,504] [ERROR] [app.service.SessionService:74] - Critical error: list indices must be integers or slices, not str
