@@ -1,6 +1,7 @@
 # web/deployment.py
 from fastapi import APIRouter, Depends
 from service.deployments import DeploymentService
+from service.deployVersions import DeployVersions
 from datetime import datetime
 import logging
 from db.connections import get_mediploy_connection
@@ -13,7 +14,6 @@ router = APIRouter(prefix="/deployments")
 logger = logging.getLogger("app.web.deployments")
 
 @router.get("")
-@router.get("/")
 async def list_deployments(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends()
@@ -29,11 +29,20 @@ async def list_deployments(
 
     # 결과 로그
     logger.debug(f"DeploymentService.list_deployments() returned {len(deployments)} items")
-    
     return deployments
 
+@router.get("/preDeploy") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
+async def list_deployVersions(
+    conn: Connection = Depends(get_mediploy_connection),
+    service: DeployVersions = Depends()
+):
+    logger.debug(f"GET: list_deployVersions endpoint called")
+
+    logger.debug(f"Calling DeploymentService.list_deployVersions)")
+    result = await service.list_deployVersions(column_name=["versionId", "versionName"], conn=conn)
+    return result
+
 @router.get("/{deploymentId}")
-@router.get("/{deploymentId}/")
 async def deployment_detail(
     deploymentId: int,
     conn: Connection = Depends(get_mediploy_connection),
@@ -52,7 +61,6 @@ async def deployment_detail(
         
         # 결과 로그
         logger.debug(f"deployment_detail for deploymentId={deploymentId}: {deployment}")
-
         return deployment
     
     except Missing as exc:
