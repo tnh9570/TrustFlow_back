@@ -2,9 +2,9 @@
 from pymysql.connections import Connection
 from typing import List
 from model.deployments import Deployments
-from db.connections import get_mediploy_connection
 from fastapi import Depends
 from error import Missing, Duplicate
+from state import CANCLED
 
 import logging
 logger = logging.getLogger("app.data.deployments")
@@ -101,11 +101,35 @@ def insert_deployment(hospital_id: int, reservation_time, version_id: int, conn:
         raise
 
 # @with_connection
-def delete_deployment(hospital_id: int, *, conn: Connection = Depends(get_mediploy_connection)):
-    query = """
-    DELETE FROM deployments
-    WHERE hospitalId = %s
+def cancel_deployments(deploymentIds: list[int], *, conn: Connection):
     """
+    배포 ID 리스트에 대해 상태를 취소로 업데이트.
+
+    Args:
+        deploymentIds (list[int]): 취소할 배포 ID 리스트.
+        conn (Connection): 데이터베이스 연결 객체.
+    """
+
+    logger.debug(f"Starting cancel_deployments data method with IDs: {deploymentIds}")
+    
+    # SQL 쿼리 생성
+    placeholders = ",".join(["%s"] * len(deploymentIds))  # 각 ID에 대해 %s 생성
+    query = f"""
+    UPDATE deployments 
+    SET deployStatus = %s 
+    WHERE deploymentId IN ({placeholders});
+    """
+    logger.debug(f"Generated query: {query}")
+    
+    # 매개변수 준비
+    params = [CANCLED] + deploymentIds
+    logger.debug(f"Executing query with params: {params}")
+
+    # 쿼리 실행
     with conn.cursor() as cursor:
-        cursor.execute(query, (hospital_id,))
+        cursor.execute(query, params)
     conn.commit()
+
+    logger.debug("Query execution completed and transaction committed.")
+
+    return 

@@ -10,7 +10,7 @@ from data.deployments import (
     fetch_deployments,
     fetch_deployment_detail,
     insert_deployment,
-    delete_deployment
+    cancel_deployments
 )
 
 
@@ -26,14 +26,14 @@ class DeploymentService:
             conn (Connection): 데이터베이스 연결 객체.
 
         Returns:
-            Deployments(deployment_with_names): 병원 이름이 포함된 배포 리스트.
+            list[Deployments] : 병원 이름이 포함된 배포 리스트.
         """
         self.logger.debug("Starting list_deployments service method")
         
-        self.logger.debug("Fetching deployments from data layer")
+        self.logger.debug("Fetching fetch_deployments from data layer")
         deployments = fetch_deployments(conn)
         
-        self.logger.debug(f"Retrieved {len(deployments[:2])} deployments")
+        self.logger.debug(f"Retrieved {len(deployments)} deployments")
 
         # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
         return [
@@ -50,7 +50,7 @@ class DeploymentService:
             conn (Connection): 데이터베이스 연결 객체.
 
         Returns:
-            Deployments(deployment_with_name): 병원 이름이 포함된 배포 상세 정보.
+            Deployments : 병원 이름이 포함된 배포 상세 정보.
         """
 
         self.logger.debug(f"Starting deployment_detail service method for deploymentId: {deploymentId}")
@@ -76,5 +76,20 @@ class DeploymentService:
         self.logger.debug(f"Starting reserve_deployment service method Input data - hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}")
         insert_deployment(hospitalId, reservationTime, versionId, conn)
 
-    async def cancel_deployment(self, hospitalId: int):
-        delete_deployment(hospitalId)
+    async def cancel_deployments(self, deploymentIds: list[int], conn: Connection):
+        """
+        deploymentIds (list[int])를 받아서 CANCLED(5) 로 업데이트
+        
+        Args:
+            deploymentIds (int): 배포 ID.
+            conn (Connection): 데이터베이스 연결 객체.
+
+        Returns:
+            
+        """    
+        self.logger.debug(f"Starting deployment_detail service method for deploymentId: {deploymentIds}")
+        
+        self.logger.debug(f"Fetching deployment_detail for deploymentId: {deploymentIds}")
+        cancel_deployments(deploymentIds=deploymentIds, conn=conn)
+
+        
