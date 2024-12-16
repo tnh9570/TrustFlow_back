@@ -5,8 +5,8 @@ if settings.TEST :
 else : 
     session_data = {}
 
-RESERVED=1
-DEPLOYING=2
-SUCCESS=3
-FAIL=4
-CANCLED=5
+RESERVED=1 # 예약
+DEPLOYING=2 # 배포중
+SUCCESS=3 # 성공
+FAIL=4 # 실패
+CANCLED=5 # 취소
