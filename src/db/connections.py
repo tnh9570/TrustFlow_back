@@ -28,8 +28,8 @@ def get_mediploy_connection() -> Generator[Connection, None, None]:
     print("MEDIPLOYDB connection generate")
     conn = get_connection(settings.MEDIPLOYDB)
     try:
-        logging.debug("MEDIPLOYDB connection ASDFASDF")
-        print("MEDIPLOYDB connection ASDFASDF")
+        logging.debug("MEDIPLOYDB connection")
+        print("MEDIPLOYDB connection")
         yield conn
     finally:
         logging.debug("MEDIPLOYDB connection close")
