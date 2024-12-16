@@ -18,7 +18,6 @@ async def list_deployVersions(
 ):
     logger.debug(f"GET: list_deployVersions endpoint called")
 
-    logger.debug(f"Calling DeploymentService.list_deployVersions)")
     result = await service.list_deployVersions(column_name=["versionId","versionName","filePath","SHA1Value","isNhnDeployment","createdAt"], conn=conn)
     return result
 
@@ -29,7 +28,6 @@ async def check_deployVersions(
 ):
     logger.debug(f"GET: check_deployVersions endpoint called")
 
-    logger.debug(f"Calling DeploymentService.check_deployVersions)")
     result = await service.check_deployVersions()
     return result
 
@@ -51,11 +49,23 @@ async def make_deployVersions(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
 ):
-    logger.debug(f"GET: list_deployVersions endpoint called")
+    logger.debug(f"GET: list_deployVersions endpoint called with versionName: {versionName}")
 
-    logger.debug(f"Calling DeploymentService.list_deployVersions")
     try:
         await service.make_deployVersions(versionName=versionName, conn=conn)
         return "complete"
     except Duplicate as e :
         raise HTTPException(status_code=409, detail=str(e))
+
+@router.get("/deployNHN/{versionId}")
+async def NHN_deployVersions(
+    versionId: int,
+    conn: Connection = Depends(get_mediploy_connection),
+    service: DeployVersions = Depends()
+):  
+    logger.debug(f"GET: NHN_deployVersions endpoint called with versionId: {versionId}")
+    try :
+        await service.NHN_deployVersions(versionId=versionId, conn=conn)
+    except Exception as e :
+        raise HTTPException(status_code=404, detail=str(e)) 
+    return "complete"

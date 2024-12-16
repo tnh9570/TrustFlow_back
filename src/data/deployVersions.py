@@ -50,7 +50,7 @@ async def insert_deployVersions(versionName: str, filpath: str, SHA1Value: str, 
     """
 
     logger.debug(
-        f"Executing query: {query} with parameters: versionName={versionName}, SHA1Value={SHA1Value}"
+        f"Executing query: {query} with parameters: versionName: {versionName}, SHA1Value: {SHA1Value}"
     )
     try :
         with conn.cursor() as cursor:
@@ -63,4 +63,28 @@ async def insert_deployVersions(versionName: str, filpath: str, SHA1Value: str, 
         )
     except Exception as e:
         logger.error(e)
+        raise e
+
+async def update_deployVersions(versionId: int, conn: Connection):
+    logger.debug("Starting update_deployVersions data method")
+    
+    query1 = "UPDATE deployVersions SET isNhnDeployment = 0 WHERE isNhnDeployment = 1;"
+    query2 = "UPDATE deployVersions SET isNhnDeployment = 1 WHERE versionId = %s;"
+    
+    logger.debug(f"Executing queries with parameters: versionId={versionId}")
+    
+    try:
+        with conn.cursor() as cursor:
+            # 첫 번째 쿼리 실행
+            cursor.execute(query1)
+            logger.debug("Query1 executed successfully")
+
+            # 두 번째 쿼리 실행
+            cursor.execute(query2, (versionId,))
+            logger.debug("Query2 executed successfully")
+        
+        conn.commit()
+        logger.info(f"deployVersions updated successfully for versionId={versionId}")
+    except Exception as e:
+        logger.error(f"Error executing update_deployVersions: {e}")
         raise e

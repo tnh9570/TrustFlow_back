@@ -8,7 +8,8 @@ from error import Duplicate
 from data.deployVersions import (
     fetch_deployVersions,
     fetch_deployVersions_detail,
-    insert_deployVersions
+    insert_deployVersions,
+    update_deployVersions
 )
 
 
@@ -48,7 +49,7 @@ class DeployVersions:
         
         return "v1.2.0"
     
-    async def make_deployVersions(self, versionName: str, conn: Connection) :
+    async def make_deployVersions(self, versionName: str, conn: Connection):
         """
         package.json(versionName) 을 기준으로 새로운 버전 생성
 
@@ -56,7 +57,6 @@ class DeployVersions:
         """
         self.logger.debug(f"Starting make_deployVersions service method with versionName: {versionName}")
 
-        self.logger.debug(f"Fetching fetch_deployVersions_detail with parameter versionName: {versionName}")
         result = await fetch_deployVersions_detail(versionName=versionName, conn=conn)
         self.logger.debug(f"result = {result}")
 
@@ -73,7 +73,16 @@ class DeployVersions:
             self.logger.debug(f"insert_deployVersions with parameter versionName:{versionName}")
             await insert_deployVersions(versionName=versionName,filpath="filepath",SHA1Value="TEST",conn=conn)
 
+    async def NHN_deployVersions(self,versionId: int, conn: Connection):
+        """
+        nhn 안정화 버전 배포
 
 
+        """
+        self.logger.debug(f"Starting NHN_deployVersions service method with versionId: {versionId}")        
+        try:
+            await update_deployVersions(versionId=versionId, conn=conn)
+        except Exception as e :
+            raise e 
 
 
