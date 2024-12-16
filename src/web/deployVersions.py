@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
 from error import Duplicate
+from model.deployVersions import DeployVersionCreate
 
 router = APIRouter(prefix="/deployVersions")
 logger = logging.getLogger("app.web.deployVersions")
@@ -31,8 +32,8 @@ async def check_deployVersions(
     result = await service.check_deployVersions()
     return result
 
-@router.get(
-    "/make/{versionName}",
+@router.post(
+    "/create/",
     responses={
         200: {
             "description": "Successfully created or no conflicts.",
@@ -45,14 +46,14 @@ async def check_deployVersions(
     },
 )
 async def make_deployVersions(
-    versionName: str,
+    request: DeployVersionCreate,
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
 ):
-    logger.debug(f"GET: list_deployVersions endpoint called with versionName: {versionName}")
+    logger.debug(f"GET: list_deployVersions endpoint called with versionName: {request.versionName}")
 
     try:
-        await service.make_deployVersions(versionName=versionName, conn=conn)
+        await service.make_deployVersions(versionName=request.versionName, conn=conn)
         return "complete"
     except Duplicate as e :
         raise HTTPException(status_code=409, detail=str(e))
@@ -66,6 +67,19 @@ async def NHN_deployVersions(
     logger.debug(f"GET: NHN_deployVersions endpoint called with versionId: {versionId}")
     try :
         await service.NHN_deployVersions(versionId=versionId, conn=conn)
+    except Exception as e :
+        raise HTTPException(status_code=404, detail=str(e)) 
+    return "complete"
+
+@router.delete("/delete/{versionId}")
+async def delete_deployVersions(
+    versionId: int,
+    conn: Connection = Depends(get_mediploy_connection),
+    service: DeployVersions = Depends()
+):  
+    logger.debug(f"GET: delete_deployVersions endpoint called with versionId: {versionId}")
+    try :
+        await service.delete_deployVersions(versionId=versionId, conn=conn)
     except Exception as e :
         raise HTTPException(status_code=404, detail=str(e)) 
     return "complete"

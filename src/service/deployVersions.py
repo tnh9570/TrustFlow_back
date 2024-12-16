@@ -9,7 +9,8 @@ from data.deployVersions import (
     fetch_deployVersions,
     fetch_deployVersions_detail,
     insert_deployVersions,
-    update_deployVersions
+    update_deployVersions,
+    delete_deployVersions
 )
 
 
@@ -85,4 +86,22 @@ class DeployVersions:
         except Exception as e :
             raise e 
 
+    async def delete_deployVersions(self,versionId: int, conn: Connection):
+        """
+        인자로 주어진 versionId 삭제
 
+        Args:
+            versionId (int) : 삭제할 컬럼
+            conn (Connection): 데이터베이스 연결 객체.
+
+        Returns:
+            완료 메세지
+        """
+        self.logger.debug(f"Starting delete_deployVersions service method with versionId: {versionId}")
+
+        # ansible 실행 코드 후 db업데이트 해야지
+        
+        try:
+            await delete_deployVersions(versionId=versionId, conn=conn)
+        except Exception as e :
+            raise e 

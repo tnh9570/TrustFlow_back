@@ -88,3 +88,25 @@ async def update_deployVersions(versionId: int, conn: Connection):
     except Exception as e:
         logger.error(f"Error executing update_deployVersions: {e}")
         raise e
+    
+async def delete_deployVersions(versionId: int, conn: Connection):
+    logger.debug("Starting delete_deployVersions data method")
+    
+    query = """
+    DELETE FROM deployVersions
+    WHERE versionId = %s;
+    """
+    
+    logger.debug(f"Executing query with parameters: versionId={versionId}")
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(query, (versionId,))
+            logger.debug("Query executed successfully")
+        
+        conn.commit()
+        logger.info(f"deployVersions updated successfully for versionId={versionId}")
+    except Exception as e:
+        logger.error(f"Error executing delete_deployVersions: {e}")
+        raise e
+    
