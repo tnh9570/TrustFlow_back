@@ -41,7 +41,13 @@ async def list_deployVersions(
 
     logger.debug(f"Calling DeploymentService.list_deployVersions)")
     result = await service.list_deployVersions(column_name=["versionId", "versionName"], conn=conn)
-    return result
+    
+    # 병합 데이터 생성
+    merged_data = {
+        "versions": result,
+        "hospitals": session_data,
+    }
+    return merged_data
 
 @router.get("/{deploymentId}")
 async def deployment_detail(
