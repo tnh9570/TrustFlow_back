@@ -8,7 +8,7 @@ router = APIRouter(prefix="/hospitals")
 logger = logging.getLogger("app.web.hospitals")
 
 @router.get("")
-@router.get("/")
+# @router.get("/")
 async def list_hospitals(
     service: HospitalsService = Depends()
 ):

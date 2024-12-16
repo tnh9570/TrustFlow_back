@@ -13,7 +13,7 @@ router = APIRouter(prefix="/session")
 logger = logging.getLogger("app.web.session")
 
 @router.get("/set")
-@router.get("/set/")
+# @router.get("/set/")
 async def set_session(
     conn: Connection = Depends(get_mms_connection),
     service: SessionService = Depends()
@@ -35,6 +35,6 @@ async def set_session(
     return "COMPLETE"
 
 @router.get("/get")
-@router.get("/get/")
+# @router.get("/get/")
 def get_sesssion():
     return session_data
