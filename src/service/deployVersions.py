@@ -31,13 +31,5 @@ class DeployVersions:
 
         self.logger.debug(f"Retrieved {len(result)} DeployVersions")
 
-        # 병합 데이터 생성
-        merged_data = {
-            "versions": result,
-            "hospitals": session_data,
-        }
-
-        self.logger.debug(f"Merged data: {merged_data}")
-
-        return merged_data
+        return result
         

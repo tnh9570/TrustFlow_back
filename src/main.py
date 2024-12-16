@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from web import creature, explorer, deployments, session, hospital
+from web import deployments, session, hospital, deployVersions
 from logging_config import setup_logging
 from state import session_data
 import logging
@@ -7,11 +7,10 @@ import logging
 setup_logging() 
 
 app = FastAPI()
-app.include_router(explorer.router)
-app.include_router(creature.router)
 app.include_router(deployments.router)
 app.include_router(session.router)
 app.include_router(hospital.router)
+app.include_router(deployVersions.router)
 
 logger = logging.getLogger("app")
 
