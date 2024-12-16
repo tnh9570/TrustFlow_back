@@ -30,7 +30,6 @@ async def set_session(
     results = await service.list_medichis_names(db_names)
     
     session_data.update(results['success'])
-    print("@@@@@@@@@@@@@@@@")
     logger.debug(f"session_data : {session_data}")
     return "COMPLETE"
 

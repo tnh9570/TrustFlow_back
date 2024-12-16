@@ -10,11 +10,12 @@ from db.connections import get_mediploy_connection
 from pymysql.connections import Connection
 from error import Missing, Duplicate
 from state import session_data
+from model.deployments import DeploymentCreate, DeploymentsCancled
 
 router = APIRouter(prefix="/deployments")
 logger = logging.getLogger("app.web.deployments")
 
-@router.get("")
+@router.get("/")
 async def list_deployments(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends()
@@ -50,7 +51,7 @@ async def list_deployVersions(
     return merged_data
 
 @router.get("/{deploymentId}")
-async def deployment_detail(
+async def get_deployment_detail(
     deploymentId: int,
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends()
@@ -63,7 +64,6 @@ async def deployment_detail(
         logger.debug(f"Connection object: {conn}")
         
         # 서비스 호출 로그
-        logger.debug(f"Calling DeploymentService.deployment_detail(deploymentId={deploymentId})")
         deployment = await service.deployment_detail(deploymentId, conn)
         
         # 결과 로그
@@ -74,35 +74,51 @@ async def deployment_detail(
         logger.warning(f"Deployment ID {deploymentId} not found: {exc}")
         raise HTTPException(status_code=404, detail="Deployment not found")
 
-@router.post("/reservation")
-async def reserve_deployment(
-    hospitalId: str, reservationTime: datetime, versionId: int,
+@router.post("/create")
+async def createDeployment(
+    request: DeploymentCreate,
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends()
 ):
-    # 요청 시작 로그
-    logger.debug(f"POST: reserve_deployment endpoint called")
-    logger.debug(f"POST: Input data - hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}")
+    """
+    배포 예약 API 엔드포인트.
 
-    # 서비스 호출 로그
-    logger.debug(f"Calling DeploymentService.reserve_deployment)")
-    await service.reserve_deployment(hospitalId, reservationTime, versionId, conn)
-    return {"message": "Deployment reserved"}
+    Args:
+        request (DeploymentCreate): 예약 요청 데이터.
+        conn (Connection): 데이터베이스 연결 객체.
+        service (DeploymentService): 배포 서비스 객체.
 
-@router.put("/cancled/{dId}")
+    Returns:
+        dict: 성공 메시지.
+    """
+    logger.info("POST: /reservation endpoint called")
+    logger.debug(f"Request data: {request}")
+
+    try:
+        await service.create_deployment(
+            hospitalId=request.hospitalId,
+            reservationTime=request.reservationTime,
+            versionId=request.versionId,
+            conn=conn
+        )
+        return {"message": "Deployment reserved successfully"}
+    except ValueError as ve:
+        logger.error(f"Validation error: {ve}")
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred.")
+    
+@router.put("/cancled")
 async def cancel_deployments(
-    dIds: List[int] = Query(
-        ...,  # 필수 파라미터
-        title="Deployment IDs",  # 파라미터 설명
-        description="List of deployment IDs to cancel",  # 상세 설명
-        example=[1, 2, 3],  # Swagger UI에서 표시할 예제
-    ),
+    request: DeploymentsCancled,
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends(),
 ):
-    logger.debug(f"PUT: cancel_deployments endpoint called")
-    logger.debug(f"POST: Input data - deploymentId={dIds}")
-
-    logger.debug(f"Calling DeploymentService.cancel_deployments")
-    await service.cancel_deployments(deploymentIds = dIds, conn = conn)
-    return {"message": "Deployment canceled"}
+    logger.info(f"PUT: cancel_deployments: endpoint called with data: {request}")
+    try:
+        result = await service.cancel_deployments(deploymentIds = request.deploymentIds, conn = conn)
+        return {"result": result}
+    except Exception as e:
+        logger.error(f"Error in cancel_deployment: {e}")
+        raise HTTPException(status_code=500, detail="An error occurred while cancelling deployments.")

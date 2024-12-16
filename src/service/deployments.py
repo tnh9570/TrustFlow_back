@@ -6,11 +6,13 @@ from model.deployments import Deployments
 import logging
 from error import Missing
 from state import session_data
+from model.deployments import DeploymentCreate, DeploymentsCancled
 from data.deployments import (
     fetch_deployments,
     fetch_deployment_detail,
-    insert_deployment,
-    cancel_deployments
+    create_deployment,
+    fetch_target_ids,
+    update_deployments_to_canceled
 )
 
 
@@ -72,24 +74,56 @@ class DeploymentService:
             
         return deployment_with_name
 
-    async def reserve_deployment(self, hospitalId: str, reservationTime, versionId: int, conn: Connection):
-        self.logger.debug(f"Starting reserve_deployment service method Input data - hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}")
-        insert_deployment(hospitalId, reservationTime, versionId, conn)
-
-    async def cancel_deployments(self, deploymentIds: list[int], conn: Connection):
+    async def create_deployment(self, hospitalId: str, reservationTime: datetime, versionId: int, conn: Connection):
         """
-        deploymentIds (list[int])를 받아서 CANCLED(5) 로 업데이트
-        
+        배포 예약 로직.
+
         Args:
-            deploymentIds (int): 배포 ID.
+            hospitalId (str): 병원 ID.
+            reservationTime (datetime): 예약 시간.
+            versionId (int): 배포 버전 ID.
+            conn (Connection): 데이터베이스 연결 객체.
+        """
+        self.logger.info(f"Starting create_deployment service method. \
+                            Input data: hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}")
+        
+        # 예약 시간 검증
+        if reservationTime <= datetime.now():
+            self.logger.error("Reservation time must be in the future.")
+            raise ValueError("Reservation time must be in the future.")
+
+        # 데이터 계층 호출
+        try:
+            create_deployment(hospitalId, reservationTime, versionId, conn)
+        except Exception as e:
+            self.logger.error(f"Error in create_deployment: {e}")
+            raise
+
+    async def cancel_deployments(self, deploymentIds: list[int], conn: Connection) -> dict:
+        """
+        배포 ID 리스트의 상태를 취소로 업데이트하고 결과를 반환.
+
+        Args:
+            deploymentIds (list[int]): 취소할 배포 ID 리스트.
             conn (Connection): 데이터베이스 연결 객체.
 
         Returns:
-            
-        """    
-        self.logger.debug(f"Starting deployment_detail service method for deploymentId: {deploymentIds}")
+            dict: {"updated": [성공한 ID 리스트], "not_updated": [실패한 ID 리스트]}
+        """
+        self.logger.debug(f"Starting cancel_deployments service method with IDs: {deploymentIds}")
         
-        self.logger.debug(f"Fetching deployment_detail for deploymentId: {deploymentIds}")
-        cancel_deployments(deploymentIds=deploymentIds, conn=conn)
+        # 1. 업데이트 대상 ID 가져오기
+        target_ids = fetch_target_ids(deploymentIds, conn)
+        self.logger.debug(f"Target IDs for update: {target_ids}")
 
+        # 2. 업데이트 수행
+        update_deployments_to_canceled(target_ids, conn)
+        
+        # 결과 계산
+        updated = target_ids
+        not_updated = list(set(deploymentIds) - set(updated))
+        self.logger.debug(f"Updated IDs: {updated}")
+        self.logger.debug(f"Not Updated IDs: {not_updated}")
+        
+        return {"updated": updated, "not_updated": not_updated}
         

@@ -1,11 +1,11 @@
 # data/deployment.py
 from pymysql.connections import Connection
 from typing import List
-from model.deployments import Deployments
+from model.deployments import Deployments,DeploymentCreate, DeploymentsCancled
 from fastapi import Depends
 from error import Missing, Duplicate
-from state import CANCLED
-
+from state import CANCLED, RESERVED
+import datetime
 import logging
 logger = logging.getLogger("app.data.deployments")
 
@@ -76,60 +76,90 @@ def fetch_deployment_detail(conn: Connection, deploymentId: int) -> Deployments:
         raise Missing(msg=f"Deployment with ID {deploymentId} not found")
 
 # @with_connection
-def insert_deployment(hospital_id: int, reservation_time, version_id: int, conn: Connection):
-    logger.debug("Starting insert_deployment data method")
+def create_deployment(hospitalId: str, reservationTime: datetime, versionId: int, conn: Connection):
+    """
+    배포 예약을 데이터베이스에 삽입하는 함수.
+
+    Args:
+        hospitalId (str): 병원 ID.
+        reservationTime (datetime): 예약 시간.
+        versionId (int): 배포 버전 ID.
+        conn (Connection): 데이터베이스 연결 객체.
+    """
+    logger.debug("Starting create_deployment data method")
     query = """
     INSERT INTO deployments (hospitalId, reservationTime, versionId, deployStatus)
     VALUES (%s, %s, %s, 1)
     """
-
     logger.debug(
-        f"Executing query: {query} with parameters: hospital_id={hospital_id}, "
-        f"reservation_time={reservation_time}, version_id={version_id}"
+        f"Executing query: {query} with parameters: "
+        f"hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}"
     )
-    try :
+    try:
         with conn.cursor() as cursor:
-            cursor.execute(query, (hospital_id, reservation_time, version_id))
+            cursor.execute(query, (hospitalId, reservationTime, versionId))
         conn.commit()
-
-        logger.info(
-            f"Deployment inserted successfully. "
-            f"hospital_id={hospital_id}, reservation_time={reservation_time}, version_id={version_id}"
-        )
+        logger.info("Deployment inserted successfully.")
     except Exception as e:
-        logger.error(e)
+        logger.error(f"Database error: {e}")
         raise
 
-# @with_connection
-def cancel_deployments(deploymentIds: list[int], *, conn: Connection):
-    """
-    배포 ID 리스트에 대해 상태를 취소로 업데이트.
 
+def fetch_target_ids(deployment_ids: list[int], conn: Connection) -> list[int]:
+    """
+    현재 상태가 RESERVED인 업데이트 대상 ID 가져오기.
+    
     Args:
-        deploymentIds (list[int]): 취소할 배포 ID 리스트.
+        deployment_ids (list[int]): 요청된 배포 ID 리스트.
+        conn (Connection): 데이터베이스 연결 객체.
+
+    Returns:
+        list[int]: 업데이트 대상 ID 리스트.
+    """
+    logger.debug("Starting fetch_target_ids data method")
+    placeholders = ",".join(["%s"] * len(deployment_ids))
+    query = f"""
+    SELECT deploymentId 
+    FROM deployments 
+    WHERE deploymentId IN ({placeholders}) 
+    AND deployStatus = {RESERVED};
+    """
+    logger.debug(f"Executing SELECT query: {query} with IDs: {deployment_ids}")
+    
+    with conn.cursor() as cursor:
+        cursor.execute(query, deployment_ids)
+        result = [row['deploymentId'] for row in cursor.fetchall()]
+    
+    logger.debug(f"Target IDs fetched: {result}")
+    
+    return result
+
+
+def update_deployments_to_canceled(target_ids: list[int], conn: Connection):
+    """
+    대상 ID의 상태를 CANCELED로 업데이트.
+    
+    Args:
+        target_ids (list[int]): 업데이트 대상 ID 리스트.
         conn (Connection): 데이터베이스 연결 객체.
     """
+    logger.debug("Starting update_deployments_to_canceled data method")
 
-    logger.debug(f"Starting cancel_deployments data method with IDs: {deploymentIds}")
-    
-    # SQL 쿼리 생성
-    placeholders = ",".join(["%s"] * len(deploymentIds))  # 각 ID에 대해 %s 생성
+    if not target_ids:
+        logger.info("No target IDs provided for update.")
+        return
+
+    placeholders = ",".join(["%s"] * len(target_ids))
     query = f"""
     UPDATE deployments 
     SET deployStatus = %s 
     WHERE deploymentId IN ({placeholders});
     """
-    logger.debug(f"Generated query: {query}")
+    params = [CANCLED] + target_ids
+    logger.debug(f"Executing UPDATE query: {query} with params: {params}")
     
-    # 매개변수 준비
-    params = [CANCLED] + deploymentIds
-    logger.debug(f"Executing query with params: {params}")
-
-    # 쿼리 실행
     with conn.cursor() as cursor:
         cursor.execute(query, params)
     conn.commit()
-
-    logger.debug("Query execution completed and transaction committed.")
-
-    return 
+    
+    logger.debug(f"Updated rows count: {cursor.rowcount}")

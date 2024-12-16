@@ -7,3 +7,6 @@ class DeployVersions(BaseModel):
     SHA1Value: str
     isNhnDeployment: bool
     createdAt: str
+
+class DeployVersionCreate(BaseModel):
+    versionName: str

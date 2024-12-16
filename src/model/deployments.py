@@ -10,3 +10,12 @@ class Deployments(BaseModel):
     createdAt: datetime
     updatedAt: datetime
     hospitalName: str | None = None
+
+class DeploymentCreate(BaseModel):
+    hospitalId: str
+    reservationTime: datetime
+    immediately: bool
+    versionId: int
+
+class DeploymentsCancled(BaseModel):
+    deploymentIds: list[int]
