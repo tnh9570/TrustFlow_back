@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     MMS_AUTHORIZATION: str
 
+    TEST: bool
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
