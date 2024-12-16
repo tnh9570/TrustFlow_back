@@ -9,3 +9,4 @@ class Deployments(BaseModel):
     deployStatus: int
     createdAt: datetime
     updatedAt: datetime
+    hospitalName: str | None = None

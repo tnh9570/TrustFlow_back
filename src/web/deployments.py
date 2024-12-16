@@ -7,6 +7,7 @@ from db.connections import get_mediploy_connection
 from pymysql.connections import Connection
 from error import Missing, Duplicate
 from fastapi import APIRouter, HTTPException
+from state import session_data
 
 router = APIRouter(prefix="/deployments")
 logger = logging.getLogger("app.web.deployments")
@@ -24,7 +25,7 @@ async def list_deployments(
         
     # 서비스 호출 로그
     logger.debug("Calling DeploymentService.list_deployments()")
-    deployments = service.list_deployments(conn)
+    deployments = await service.list_deployments(conn)
 
     # 결과 로그
     logger.debug(f"DeploymentService.list_deployments() returned {len(deployments)} items")
@@ -47,12 +48,13 @@ async def deployment_detail(
         
         # 서비스 호출 로그
         logger.debug(f"Calling DeploymentService.deployment_detail(deploymentId={deploymentId})")
-        deployment = service.deployment_detail(deploymentId, conn)
+        deployment = await service.deployment_detail(deploymentId, conn)
         
         # 결과 로그
         logger.debug(f"deployment_detail for deploymentId={deploymentId}: {deployment}")
-        
+
         return deployment
+    
     except Missing as exc:
         logger.warning(f"Deployment ID {deploymentId} not found: {exc}")
         raise HTTPException(status_code=404, detail="Deployment not found")
@@ -70,10 +72,10 @@ async def reserve_deployment(
 
     # 서비스 호출 로그
     logger.debug(f"Calling DeploymentService.reserve_deployment)")
-    service.reserve_deployment(hospitalId, reservationTime, versionId, conn)
+    await service.reserve_deployment(hospitalId, reservationTime, versionId, conn)
     return {"message": "Deployment reserved"}
 
 @router.delete("/deployments/{hospitalId}")
 async def cancel_deployment(hospitalId: int, service: DeploymentService = Depends()):
-    service.cancel_deployment(hospitalId)
+    await service.cancel_deployment(hospitalId)
     return {"message": "Deployment canceled"}
