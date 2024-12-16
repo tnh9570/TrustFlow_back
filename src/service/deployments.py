@@ -20,7 +20,7 @@ class DeploymentService:
 
     async def list_deployments(self, conn: Connection) -> list[Deployments]:
         """
-        배포 리스트를 가져오고 병원 이름을 추가.
+        배포 리스트를 가져오고 병원 이름을 추가한 것을 return.
         
         Args:
             conn (Connection): 데이터베이스 연결 객체.
@@ -43,7 +43,7 @@ class DeploymentService:
 
     async def deployment_detail(self,deploymentId: int, conn: Connection) -> Deployments | None:
         """
-        배포 아이디를 기준으로 한개의 ROW 정보를 가져오고 병원 이름을 추가.
+        배포 아이디를 기준으로 한개의 ROW 정보를 가져오고 병원 이름을 추가한 것을 return.
         
         Args:
             deploymentId (int): 배포 ID.
