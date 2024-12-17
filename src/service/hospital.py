@@ -10,6 +10,6 @@ class HospitalsService:
     async def list_hospitals(self) -> list[Hospital]:
         self.logger.debug("Starting list_hospitals service method")
         
-        results = [Hospital(hospital_id=hospitalId, hospital_name=hospitalName) for (hospitalId, hospitalName) in session_data.items()]
+        results = [Hospital(hospitalId=hospitalId, hospitalName=hospitalName) for (hospitalId, hospitalName) in session_data.items()]
 
         return results
