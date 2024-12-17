@@ -4,6 +4,7 @@ import logging
 from fastapi import APIRouter, Depends, APIRouter, HTTPException
 from service.deployments import DeploymentService
 from service.deployVersions import DeployVersions
+from service.hospital import HospitalsService 
 from db.connections import get_mediploy_connection
 from pymysql.connections import Connection
 from error import Missing
@@ -36,17 +37,18 @@ async def list_deployments(
 @router.get("/inform/") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
 async def list_deployVersions(
     conn: Connection = Depends(get_mediploy_connection),
-    service: DeployVersions = Depends()
+    serviceDeploy: DeployVersions = Depends(),
+    servicehospital: HospitalsService = Depends()
 ):
     logger.debug(f"GET: list_deployVersions endpoint called")
 
     logger.debug(f"Calling DeploymentService.list_deployVersions)")
-    result = await service.list_deployVersions(column_name=["versionId", "versionName"], conn=conn)
-    
+    versions = await serviceDeploy.list_deployVersions(column_name=["versionId", "versionName"], conn=conn)
+    hospitals = await servicehospital.list_hospitals()
     # 병합 데이터 생성
     merged_data = {
-        "versions": result,
-        "hospitals": session_data,
+        "versions": versions,
+        "hospitals": hospitals,
     }
     return merged_data
 

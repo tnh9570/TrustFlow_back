@@ -7,7 +7,7 @@ class HospitalsService:
     def __init__(self):
         self.logger = logging.getLogger("app.service.HospitalsService")
 
-    def list_hospitals(self) -> list[Hospital]:
+    async def list_hospitals(self) -> list[Hospital]:
         self.logger.debug("Starting list_hospitals service method")
         
         results = [Hospital(hospital_id=hospitalId, hospital_name=hospitalName) for (hospitalId, hospitalName) in session_data.items()]
