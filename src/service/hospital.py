@@ -1,6 +1,4 @@
 # service/deployment.py
-from datetime import datetime
-from pymysql.connections import Connection
 from model.hospital import Hospital
 import logging
 from state import session_data

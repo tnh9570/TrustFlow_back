@@ -1,12 +1,10 @@
 # service/deployment.py
 from datetime import datetime
-from fastapi import Depends, HTTPException
 from pymysql.connections import Connection
 from model.deployments import Deployments
 import logging
 from error import Missing
 from state import session_data
-from model.deployments import DeploymentCreate, DeploymentsCancled
 from data.deployments import (
     fetch_deployments,
     fetch_deployment_detail,

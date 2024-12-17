@@ -5,8 +5,7 @@ from service.excludedDirectories import excludedDirectoriesService
 from fastapi import APIRouter
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
-from error import Duplicate
-from model.excludedDirectories import ExcludedDirectories, ExcludedDirectoriesCreate
+from model.excludedDirectories import ExcludedDirectoriesCreate
 
 router = APIRouter(prefix="/except")
 logger = logging.getLogger("app.web.excludedDirectories")

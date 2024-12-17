@@ -5,8 +5,7 @@ from datetime import datetime
 import logging
 from db.connections import get_mms_connection
 from pymysql.connections import Connection
-from error import Missing, Duplicate
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from state import session_data
 
 router = APIRouter(prefix="/session")

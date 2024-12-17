@@ -1,9 +1,8 @@
 # data/deployment.py
 from pymysql.connections import Connection
 from typing import List
-from model.deployments import Deployments,DeploymentCreate, DeploymentsCancled
-from fastapi import Depends
-from error import Missing, Duplicate
+from model.deployments import Deployments
+from error import Missing
 from state import CANCLED, RESERVED
 import datetime
 import logging

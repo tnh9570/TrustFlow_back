@@ -1,8 +1,6 @@
 import logging
-import json
 from pymysql.connections import Connection
 from model.deployVersions import DeployVersions
-from state import session_data
 from error import Duplicate
 
 from data.deployVersions import (

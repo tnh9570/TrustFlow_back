@@ -1,14 +1,12 @@
 # web/deployment.py
 import logging
 
-from typing import List
-from fastapi import APIRouter, Depends, APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, APIRouter, HTTPException
 from service.deployments import DeploymentService
 from service.deployVersions import DeployVersions
-from datetime import datetime
 from db.connections import get_mediploy_connection
 from pymysql.connections import Connection
-from error import Missing, Duplicate
+from error import Missing
 from state import session_data
 from model.deployments import DeploymentCreate, DeploymentsCancled
 

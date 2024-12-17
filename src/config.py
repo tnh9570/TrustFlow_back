@@ -1,10 +1,5 @@
 from pydantic_settings import BaseSettings
-"""
-class 안으로 ㄷ르어가고 BAseSettings
-load_env 
 
-
-"""
 class DatabaseSettings(BaseSettings):
     host: str
     port: int

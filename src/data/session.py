@@ -1,9 +1,5 @@
 # data/deployment.py
 from pymysql.connections import Connection
-from typing import List
-from db.connections import get_mediploy_connection
-from fastapi import Depends
-from error import Missing, Duplicate
 import logging
 
 logger = logging.getLogger("app.data.session")

@@ -1,5 +1,4 @@
 # logging_config.py
-import logging
 from logging.config import dictConfig
 
 # 로깅 설정

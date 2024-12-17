@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from web import deployments, session, hospital, deployVersions, excludedDirectories
 from logging_config import setup_logging
-from state import session_data
 import logging
 
 setup_logging() 

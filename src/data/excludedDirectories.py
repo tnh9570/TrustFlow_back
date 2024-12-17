@@ -1,7 +1,6 @@
 from pymysql.connections import Connection
 from typing import List
 from model.excludedDirectories import ExcludedDirectories
-from datetime import datetime
 import logging
 
 logger = logging.getLogger("app.data.excludedDirectories")

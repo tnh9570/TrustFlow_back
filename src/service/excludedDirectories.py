@@ -1,9 +1,6 @@
 import logging
-import json
 from pymysql.connections import Connection
 from model.excludedDirectories import ExcludedDirectories
-from state import session_data
-from error import Duplicate
 
 
 from data.excludedDirectories import (

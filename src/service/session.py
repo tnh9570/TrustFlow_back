@@ -1,10 +1,6 @@
 # service/deployment.py
-from datetime import datetime
-from fastapi import Depends, HTTPException
 from pymysql.connections import Connection
 import logging
-from error import Missing
-from state import session_data
 import httpx
 import asyncio
 from config import settings
