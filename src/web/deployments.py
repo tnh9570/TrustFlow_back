@@ -15,6 +15,7 @@ from model.deployments import DeploymentCreate, DeploymentsCancled
 router = APIRouter(prefix="/deployments")
 logger = logging.getLogger("app.web.deployments")
 
+@router.get("", include_in_schema=False)
 @router.get("/")
 async def list_deployments(
     conn: Connection = Depends(get_mediploy_connection),
@@ -33,7 +34,8 @@ async def list_deployments(
     logger.debug(f"DeploymentService.list_deployments() returned {len(deployments)} items")
     return deployments
 
-@router.get("/preDeploy") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
+@router.get("/preDeploy", include_in_schema=False)
+@router.get("/preDeploy/") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
 async def list_deployVersions(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
@@ -74,7 +76,8 @@ async def get_deployment_detail(
         logger.warning(f"Deployment ID {deploymentId} not found: {exc}")
         raise HTTPException(status_code=404, detail="Deployment not found")
 
-@router.post("/create")
+@router.post("/create", include_in_schema=False)
+@router.post("/create/")
 async def createDeployment(
     request: DeploymentCreate,
     conn: Connection = Depends(get_mediploy_connection),
@@ -109,7 +112,8 @@ async def createDeployment(
         logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
-@router.put("/cancled")
+@router.put("/cancled", include_in_schema=False)
+@router.put("/cancled/")
 async def cancel_deployments(
     request: DeploymentsCancled,
     conn: Connection = Depends(get_mediploy_connection),

@@ -11,8 +11,8 @@ from model.deployVersions import DeployVersionCreate
 router = APIRouter(prefix="/deployVersions")
 logger = logging.getLogger("app.web.deployVersions")
 
-@router.get("")
-# @router.get("/")
+@router.get("", include_in_schema=False)
+@router.get("/")
 async def list_deployVersions(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
@@ -22,7 +22,8 @@ async def list_deployVersions(
     result = await service.list_deployVersions(column_name=["versionId","versionName","filePath","SHA1Value","isNhnDeployment","createdAt"], conn=conn)
     return result
 
-@router.get("/check")
+@router.get("/check", include_in_schema=False)
+@router.get("/check/")
 # @router.get("/")
 async def check_deployVersions(
     service: DeployVersions = Depends()
@@ -32,6 +33,7 @@ async def check_deployVersions(
     result = await service.check_deployVersions()
     return result
 
+@router.post("/create", include_in_schema=False)
 @router.post(
     "/create/",
     responses={
