@@ -32,8 +32,8 @@ async def list_deployments(
     logger.debug(f"DeploymentService.list_deployments() returned {len(deployments)} items")
     return deployments
 
-@router.get("/preDeploy", include_in_schema=False)
-@router.get("/preDeploy/") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
+@router.get("/inform", include_in_schema=False)
+@router.get("/inform/") # 같은 / 경로에 있을 때 정적 주소가 동적 주소보다 먼저 동작하기 떄문에 정적주소를 먼저 작성
 async def list_deployVersions(
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
