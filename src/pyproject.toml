@@ -1,14 +1,12 @@
 [tool.poetry]
-name = "fastapi-hanbit"
+name = "src"
 version = "0.1.0"
 description = ""
-authors = ["dextto <dexter.haan@gmail.com>"]
+authors = ["TNH <sdcard11291@trustnhope.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
-hypothesis = "^6.98.11"
-schemathesis = "^3.25.3"
+python = "^3.12"
 
 
 [build-system]
