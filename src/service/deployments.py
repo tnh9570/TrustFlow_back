@@ -20,7 +20,7 @@ class DeploymentService:
     def __init__(self):
         self.logger = logging.getLogger("app.service.DeploymentService")
 
-    async def list_deployments(self, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[Deployments]:
+    async def list_deployments(self, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]): # -> list[Deployments]:
         """
         배포 리스트를 가져오고 병원 이름을 추가한 것을 return.
         
@@ -37,16 +37,15 @@ class DeploymentService:
         query_filters = await parse_filters(filters)
         self.logger.debug("Fetching fetch_deployments from data layer with parameter")
         # 데이터 계층으로 파라미터 전달
-        deployments = fetch_deployments(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
-        
+        result = await fetch_deployments(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
+        self.logger.debug("complete fetch_deployments")
+        # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
+        deployments = [deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")}) for deployment in result['data']]
         self.logger.debug(f"Retrieved {len(deployments)} deployments")
 
 
-        # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
-        return [
-            deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")})
-            for deployment in deployments
-        ]
+
+        return {"data":deployments,"page": result['page']}
 
     async def deployment_detail(self,deploymentId: int, conn: Connection) -> Deployments | None:
         """

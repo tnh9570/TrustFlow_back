@@ -21,7 +21,7 @@ logger = logging.getLogger("app.data.deployments")
 #     return wrapper
 
 # @with_connection
-def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[Deployments]:
+async def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]): # -> List[Deployments] 모델 값 하나 만들기
     logger.debug(f"Starting fetch_deployments data method with parameter page:{page} sort:{sort} filters:{filters} size:{size}")
 
 # 
@@ -29,8 +29,6 @@ def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], fi
 
 # status 라는 컬럼이 없어서 status 빼고 처리하는 쿼리 예시
 # localhost:8000/deployments?page=1&sort=createdAt:desc&sort=deployStatus:asc&filters=status:success&filters=hospitalId:c00075&filters=versionId:3
-
-
     base_query = """
     SELECT 
         dm.deploymentId, dm.hospitalId, dv.versionId, dv.versionName, dm.reservationTime, dm.deployStatus, dm.createdAt, dm.updatedAt
@@ -88,19 +86,34 @@ def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], fi
         
         sort_result = " ORDER BY "+", ".join(sort_query_params)
 
+    
     # 함수로 만들 때 return ", ".join(sort_result)
     logger.debug(f"Executing query: {sort_result}")
 
     offset = (page - 1) * size
     limit = size
     offset_query = " LIMIT %s OFFSET %s"
-
+    
+    count_query = """
+        SELECT COUNT(*) 
+        FROM deployments dm
+        JOIN deployVersions dv 
+        ON dm.versionId = dv.versionId
+        """ + filter_result
+    # 전체 개수 가져오기
     if filters :
-        query_params = list(filter_query_params) + [limit, offset]
-    else : query_params = [limit, offset]
+        query_params = list(filter_query_params)
+    else :
+        query_params = [] 
+
 
     with conn.cursor() as cursor:
-        cursor.execute(base_query + filter_result + sort_result + offset_query, query_params)
+        cursor.execute(count_query, query_params)
+        total_count = cursor.fetchone()['COUNT(*)']
+        logger.debug(f'total_count = {total_count}')
+
+    with conn.cursor() as cursor:
+        cursor.execute(base_query + filter_result + sort_result + offset_query, query_params + [limit, offset])
         results = cursor.fetchall()
 
     logger.debug(f"Query returned {len(results)} rows")
@@ -112,7 +125,10 @@ def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], fi
     deployments = [Deployments(**row) for row in results]
     logger.debug(f"Converted {len(deployments)} rows to Deployments models")
     
-    return deployments
+    
+    logger.debug(f"Total count: {total_count}")
+
+    return {"data": deployments, "page": {"totalPages":total_count}}
 
 # @with_connection
 def fetch_deployment_detail(conn: Connection, deploymentId: int) -> Deployments:
