@@ -15,7 +15,7 @@ class Deployments(BaseModel):
 class DeploymentCreate(BaseModel):
     hospitalId: str
     reservationTime: datetime
-    immediately: bool
+    immediately: bool = False
     versionId: int
 
 class DeploymentsCancled(BaseModel):
