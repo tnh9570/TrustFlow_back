@@ -21,20 +21,86 @@ logger = logging.getLogger("app.data.deployments")
 #     return wrapper
 
 # @with_connection
-def fetch_deployments(conn: Connection) -> List[Deployments]:
-    logger.debug("Starting fetch_deployments data method")
-    query = """
+def fetch_deployments(conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[Deployments]:
+    logger.debug(f"Starting fetch_deployments data method with parameter page:{page} sort:{sort} filters:{filters} size:{size}")
+
+# 
+# localhost:8000/deployments?page=1&sort=createdAt:desc&sort=deployStatus:asc&filters=deployStatus:1&filters=hospitalId:c00075&filters=versionId:3
+
+# status 라는 컬럼이 없어서 status 빼고 처리하는 쿼리 예시
+# localhost:8000/deployments?page=1&sort=createdAt:desc&sort=deployStatus:asc&filters=status:success&filters=hospitalId:c00075&filters=versionId:3
+
+
+    base_query = """
     SELECT 
         dm.deploymentId, dm.hospitalId, dv.versionId, dv.versionName, dm.reservationTime, dm.deployStatus, dm.createdAt, dm.updatedAt
     FROM deployments dm
     JOIN deployVersions dv 
-    ON dm.versionId = dv.versionId
+    ON dm.versionId = dv.versionId 
     """
 
-    logger.debug(f"Executing query: {query}")
+    # filter 조건 생성
+    allow_filter_columns = {
+        "hospitalId": "dm.hospitalId",
+        "versionId": "dv.versionId",
+        "deployStatus": "dm.deployStatus"
+    }
+
+    filter_result = "WHERE 1 "
+    if filters:
+        filter_query_params = []  # 바인딩할 파라미터 값을 저장할 리스트
+        del_list = []
+        
+        for column, value in filters.items():
+            if column in allow_filter_columns:
+                placeholders = ", ".join(["%s"] * len(value))  # IN 절의 플레이스홀더 생성
+                filter_result += f"AND {allow_filter_columns[column]} IN ({placeholders}) "
+                filter_query_params.extend(value)  # 바인딩 값 추가
+            else:
+                del_list.append(column)
+
+        for li in del_list:
+            del filters[li]
+
+        logger.debug(f"Executing query: {filter_result}")
+        logger.debug(f"Executing query parameters: {filter_query_params}")
+
+    allow_sort_columns={
+        "deploymentId":"dm.deploymentId",
+        "hospitalId":"dm.hospitalId",
+        "versionId":"dv.versionId",
+        "versionName":"dv.versionName",
+        "reservationTime":"dm.reservationTime",
+        "deployStatus":"dm.deployStatus",
+        "createdAt":"dm.createdAt",
+        "updatedAt":"dm.updatedAt"
+    }
+    allow_sort_directions=["desc","asc"]
+
+    if sort:
+        sort_query_params = []
+        for item in sort:
+            column, direction = item.split(":")
+            # direction을 소문자로 변환 후 검증
+            direction = direction.lower()
+            if column in allow_sort_columns and direction in allow_sort_directions:
+                sort_query_params.append(f"{column} {direction.upper()}")
+        
+        sort_result = " ORDER BY "+", ".join(sort_query_params)
+
+    # 함수로 만들 때 return ", ".join(sort_result)
+    logger.debug(f"Executing query: {sort_result}")
+
+    offset = (page - 1) * size
+    limit = size
+    offset_query = " LIMIT %s OFFSET %s"
+
+    if filters :
+        query_params = list(filter_query_params) + [limit, offset]
+    else : query_params = [limit, offset]
 
     with conn.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(base_query + filter_result + sort_result + offset_query, query_params)
         results = cursor.fetchall()
 
     logger.debug(f"Query returned {len(results)} rows")

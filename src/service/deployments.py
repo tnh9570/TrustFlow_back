@@ -2,9 +2,11 @@
 from datetime import datetime
 from pymysql.connections import Connection
 from model.deployments import Deployments
+from typing import List, Optional
 import logging
 from error import Missing
 from state import session_data
+from utils import parse_filters
 from data.deployments import (
     fetch_deployments,
     fetch_deployment_detail,
@@ -18,22 +20,27 @@ class DeploymentService:
     def __init__(self):
         self.logger = logging.getLogger("app.service.DeploymentService")
 
-    async def list_deployments(self, conn: Connection) -> list[Deployments]:
+    async def list_deployments(self, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[Deployments]:
         """
         배포 리스트를 가져오고 병원 이름을 추가한 것을 return.
         
         Args:
             conn (Connection): 데이터베이스 연결 객체.
-
+            page (int)
+            sort (List[str])
+            filters (List[str])
         Returns:
             list[Deployments] : 병원 이름이 포함된 배포 리스트.
         """
         self.logger.debug("Starting list_deployments service method")
         
-        self.logger.debug("Fetching fetch_deployments from data layer")
-        deployments = fetch_deployments(conn)
+        query_filters = await parse_filters(filters)
+        self.logger.debug("Fetching fetch_deployments from data layer with parameter")
+        # 데이터 계층으로 파라미터 전달
+        deployments = fetch_deployments(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
         
         self.logger.debug(f"Retrieved {len(deployments)} deployments")
+
 
         # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
         return [

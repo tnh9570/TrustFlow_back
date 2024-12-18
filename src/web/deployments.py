@@ -1,7 +1,8 @@
 # web/deployment.py
 import logging
 
-from fastapi import APIRouter, Depends, APIRouter, HTTPException
+from typing import List, Optional
+from fastapi import APIRouter, Depends, APIRouter, HTTPException, Query
 from service.deployments import DeploymentService
 from service.deployVersions import DeployVersions
 from service.hospital import HospitalsService 
@@ -17,9 +18,29 @@ logger = logging.getLogger("app.web.deployments")
 @router.get("", include_in_schema=False)
 @router.get("/")
 async def list_deployments(
+    # 페이지네이션 파라미터
+    page: int = Query(1, ge=1, description="Page number (default: 1)"),
+    size: int = Query(15, ge=1, le=100, description="Number of items per page (default: 15)"),
+    
+    # 정렬 파라미터
+    # sort: Optional[List[str]] = Query(
+    #     ["deploymentId:desc"],
+    #     title="Sort Fields",
+    #     description="List of fields to sort by with order (e.g., deploymentId:desc,name:asc)"
+    # ),
+    # 필터 조건 (예: hospitalId:c00075,status:active)
+    sort: List[str] = Query(["deploymentId:desc"], description="정렬 기준과 순서"),
+    filters: Optional[List[str]] = Query(None, description="필터링 조건, 예: filter=status:success"),
+
     conn: Connection = Depends(get_mediploy_connection),
     service: DeploymentService = Depends()
 ):
+    """
+    필터링, 정렬 및 페이지네이션이 적용된 배포 목록 조회 API.
+    - page: 페이지 번호
+    - sort: 정렬 기준 (여러 개 지원)
+    - filters: 필터링 조건. 형식: '칼럼명:값' (예: status:success)
+    """
     logger.debug("GET: list_deployments endpoint called")
 
     # Connection 상태 로그
@@ -27,7 +48,7 @@ async def list_deployments(
         
     # 서비스 호출 로그
     logger.debug("Calling DeploymentService.list_deployments()")
-    deployments = await service.list_deployments(conn)
+    deployments = await service.list_deployments(conn=conn, page=page, size=size, sort=sort, filters=filters)
 
     # 결과 로그
     logger.debug(f"DeploymentService.list_deployments() returned {len(deployments)} items")
