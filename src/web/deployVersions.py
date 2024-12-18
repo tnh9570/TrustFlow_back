@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
 from error import Duplicate
-from model.deployVersions import DeployVersionCreate
+from model.deployVersions import DeployVersionCreate, DeployVersionDelete
 
 router = APIRouter(prefix="/deployVersions")
 logger = logging.getLogger("app.web.deployVersions")
@@ -73,15 +73,16 @@ async def NHN_deployVersions(
         raise HTTPException(status_code=404, detail=str(e)) 
     return "complete"
 
-@router.delete("/delete/{versionId}")
+@router.delete("/delete")
+@router.delete("/delete/")
 async def delete_deployVersions(
-    versionId: int,
+    request: DeployVersionDelete,
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
 ):  
-    logger.debug(f"GET: delete_deployVersions endpoint called with versionId: {versionId}")
+    logger.debug(f"GET: delete_deployVersions endpoint called with DeployVersionDelete: {request}")
     try :
-        await service.delete_deployVersions(versionId=versionId, conn=conn)
+        await service.delete_deployVersions(versionId=request.versionId, conn=conn)
     except Exception as e :
         raise HTTPException(status_code=404, detail=str(e)) 
     return "complete"

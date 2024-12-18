@@ -2,6 +2,7 @@ import logging
 from pymysql.connections import Connection
 from model.deployVersions import DeployVersions
 from error import Duplicate
+from typing import List
 
 from data.deployVersions import (
     fetch_deployVersions,
@@ -84,7 +85,7 @@ class DeployVersions:
         except Exception as e :
             raise e 
 
-    async def delete_deployVersions(self,versionId: int, conn: Connection):
+    async def delete_deployVersions(self,versionId: List[int], conn: Connection):
         """
         인자로 주어진 versionId 삭제
 

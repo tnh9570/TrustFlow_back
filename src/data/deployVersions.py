@@ -89,19 +89,21 @@ async def update_deployVersions(versionId: int, conn: Connection):
         logger.error(f"Error executing update_deployVersions: {e}")
         raise e
     
-async def delete_deployVersions(versionId: int, conn: Connection):
+async def delete_deployVersions(versionId: List[int], conn: Connection):
     logger.debug("Starting delete_deployVersions data method")
     
-    query = """
+    placeholders = ",".join(["%s"] * len(versionId))
+
+    query = f"""
     DELETE FROM deployVersions
-    WHERE versionId = %s;
+    WHERE versionId IN ({placeholders}) ;
     """
     
     logger.debug(f"Executing query with parameters: versionId={versionId}")
     
     try:
         with conn.cursor() as cursor:
-            cursor.execute(query, (versionId,))
+            cursor.execute(query, tuple(versionId))
             logger.debug("Query executed successfully")
         
         conn.commit()
