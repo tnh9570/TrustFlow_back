@@ -42,10 +42,17 @@ class DeploymentService:
         # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
         deployments = [deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")}) for deployment in result['data']]
         self.logger.debug(f"Retrieved {len(deployments)} deployments")
+        
+
+        self.logger.debug(f"Retrieved {len(deployments)} deployments")
+
+        # 총 페이지 계산
+        total_count = result['page']['totalPages']
+        total_page = (total_count + size - 1) // size  # 나눗셈 후 올림 처리
+        self.logger.debug(f"Total pages calculated: {total_page}")
 
 
-
-        return {"data":deployments,"page": result['page']}
+        return {"data":deployments,"page": {"totalPages":total_page}}
 
     async def deployment_detail(self,deploymentId: int, conn: Connection) -> Deployments | None:
         """
