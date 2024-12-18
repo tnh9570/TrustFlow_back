@@ -5,6 +5,7 @@ class Deployments(BaseModel):
     deploymentId: int
     hospitalId: str
     versionId: int
+    versionName: str
     reservationTime: datetime
     deployStatus: int
     createdAt: datetime
