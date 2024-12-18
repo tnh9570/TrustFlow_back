@@ -115,7 +115,7 @@ async def createDeployment(
     Returns:
         dict: 성공 메시지.
     """
-    logger.info("POST: /reservation endpoint called")
+    logger.info("POST: /create endpoint called")
     logger.debug(f"Request data: {request}")
 
     try:
@@ -123,6 +123,7 @@ async def createDeployment(
             hospitalId=request.hospitalId,
             reservationTime=request.reservationTime,
             versionId=request.versionId,
+            immediately=request.immediately,
             conn=conn
         )
         return {"message": "Deployment reserved successfully"}

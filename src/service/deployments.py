@@ -78,21 +78,23 @@ class DeploymentService:
             
         return deployment_with_name
 
-    async def create_deployment(self, hospitalId: str, reservationTime: datetime, versionId: int, conn: Connection):
+    async def create_deployment(self, hospitalId: str, reservationTime: datetime, versionId: int, immediately:bool, conn: Connection):
         """
         배포 예약 로직.
+        만약 immediately 가 false(default)라면 
 
         Args:
             hospitalId (str): 병원 ID.
             reservationTime (datetime): 예약 시간.
             versionId (int): 배포 버전 ID.
+            immediately (bool): 즉시 배포 여부
             conn (Connection): 데이터베이스 연결 객체.
         """
         self.logger.info(f"Starting create_deployment service method. \
                             Input data: hospitalId={hospitalId}, reservationTime={reservationTime}, versionId={versionId}")
         
         # 예약 시간 검증
-        if reservationTime <= datetime.now():
+        if not(immediately) and reservationTime <= datetime.now():
             self.logger.error("Reservation time must be in the future.")
             raise ValueError("Reservation time must be in the future.")
 
