@@ -16,7 +16,7 @@ async def list_hospitals(
 
     # 서비스 호출 로그
     logger.debug("Calling HospitalsService.list_hospitals()")
-    hospitals = service.list_hospitals()
+    hospitals = await service.list_hospitals()
 
     # 결과 로그
     logger.debug(f"HospitalsService.list_hospitals() returned {len(hospitals)} items")
