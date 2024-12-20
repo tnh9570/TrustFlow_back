@@ -7,7 +7,7 @@ from utils import build_filter_query, build_sort_query, calculate_pagination
 
 logger = logging.getLogger("app.data.deployVersions")
 
-async def fetch_deployVersions(column_name:list, conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[DeployVersions]:
+async def fetch_deployVersions(conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[DeployVersions]:
     logger.debug("Starting fetch_deployVersions data method")
     base_query = f"""
     SELECT 
@@ -65,6 +65,24 @@ async def fetch_deployVersions(column_name:list, conn: Connection, page: int, si
 
     return {"data": deployVersions, "page": {"totalPages":total_count}}
 
+async def get_deployVersions_with_versionName(column_name: list, conn: Connection):
+    logger.debug("Starting get_deployVersions_with_versionName data method")
+    query = f"""
+    SELECT 
+        {",".join(column_name)}
+    FROM deployVersions 
+    """
+
+    logger.debug(f"Executing query: {query} with parameter")
+
+    with conn.cursor() as cursor:
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+    logger.debug(f"Query returned {result}")
+
+    return result
+
 async def fetch_deployVersions_detail(versionName: str, conn: Connection):
     logger.debug("Starting fetch_deployVersions_detail data method")
     query = """
@@ -87,8 +105,8 @@ async def fetch_deployVersions_detail(versionName: str, conn: Connection):
 async def insert_deployVersions(versionName: str, filpath: str, SHA1Value: str, conn: Connection):
     logger.debug("Starting insert_deployVersions data method")
     query = """
-    INSERT INTO deployVersions (versionName, SHA1Value)
-    VALUES (%s, %s)
+    INSERT INTO deployVersions (versionName, SHA1Value, filpath)
+    VALUES (%s, %s, %s)
     """
 
     logger.debug(
@@ -96,7 +114,7 @@ async def insert_deployVersions(versionName: str, filpath: str, SHA1Value: str, 
     )
     try :
         with conn.cursor() as cursor:
-            cursor.execute(query, (versionName, SHA1Value))
+            cursor.execute(query, (versionName, SHA1Value, filpath))
         conn.commit()
 
         logger.info(

@@ -27,7 +27,7 @@ async def list_deployVersions(
 ):
     logger.debug(f"GET: list_deployVersions endpoint called")
 
-    result = await service.list_deployVersions(column_name=["versionId","versionName","filePath","SHA1Value","isNhnDeployment","createdAt"], conn=conn, page=page, size=size, sort=sort, filters=filters)
+    result = await service.list_deployVersions(conn=conn, page=page, size=size, sort=sort, filters=filters)
     return result
 
 @router.get("/check", include_in_schema=False)
@@ -81,7 +81,7 @@ async def NHN_deployVersions(
         raise HTTPException(status_code=404, detail=str(e)) 
     return "complete"
 
-@router.delete("/delete")
+@router.delete("/delete", include_in_schema=False)
 @router.delete("/delete/")
 async def delete_deployVersions(
     request: DeployVersionDelete,

@@ -7,6 +7,7 @@ from utils import parse_filters
 
 from data.deployVersions import (
     fetch_deployVersions,
+    get_deployVersions_with_versionName,
     fetch_deployVersions_detail,
     insert_deployVersions,
     update_deployVersions,
@@ -18,23 +19,41 @@ class DeployVersions:
     def __init__(self):
         self.logger = logging.getLogger("app.service.DeployVersions")
 
-    async def list_deployVersions(self, column_name: list, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[DeployVersions]:
+    async def list_deployVersions(self, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[DeployVersions]:
         """
         특정 컬럼 데이터를 기반으로 배포 버전을 조회하고, session_data를 병합하여 반환.
         
         Args:
-            column_name (list) : 조회할 컬럼
             conn (Connection): 데이터베이스 연결 객체.
 
         Returns:
             str: 배포 버전 결과와 session_data를 포함한 JSON 문자열.
         """
-        self.logger.debug(f"Starting list_deployVersions service method for column_name: {column_name}")
+        self.logger.debug(f"Starting list_deployVersions service method")
         
         query_filters = parse_filters(filters)
 
-        self.logger.debug(f"Fetching fetch_deployVersions for column_name: {column_name}")
-        result = await fetch_deployVersions(column_name=column_name,conn=conn, page=page, size=size, sort=sort, filters=query_filters)
+        self.logger.debug(f"Fetching fetch_deployVersions")
+        result = await fetch_deployVersions(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
+
+        self.logger.debug(f"Retrieved {len(result)} DeployVersions")
+
+        return result
+    
+    async def get_deployVersions_with_versionName(self,column_name: List, conn: Connection) -> list[DeployVersions]:
+        """
+        
+        Args:
+            conn (Connection): 데이터베이스 연결 객체.
+            column_name (List): 조회할 컬럼 리스트
+
+        Returns:
+            str: 배포 버전 결과와 session_data를 포함한 JSON 문자열.
+        """
+        self.logger.debug(f"Starting get_deployVersions_with_versionName service method")
+        
+        self.logger.debug(f"Fetching fetch_deployVersions")
+        result = await get_deployVersions_with_versionName(conn=conn, column_name=column_name)
 
         self.logger.debug(f"Retrieved {len(result)} DeployVersions")
 
