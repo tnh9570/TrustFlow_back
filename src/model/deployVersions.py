@@ -14,3 +14,6 @@ class DeployVersionCreate(BaseModel):
     
 class DeployVersionDelete(BaseModel):
     versionIds: list[int]
+
+class DeployVersionNHN(BaseModel):
+    versionId: int
