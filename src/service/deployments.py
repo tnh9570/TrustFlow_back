@@ -34,7 +34,7 @@ class DeploymentService:
         """
         self.logger.debug("Starting list_deployments service method")
         
-        query_filters = await parse_filters(filters)
+        query_filters = parse_filters(filters)
         self.logger.debug("Fetching fetch_deployments from data layer with parameter")
         # 데이터 계층으로 파라미터 전달
         result = await fetch_deployments(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
@@ -43,9 +43,6 @@ class DeploymentService:
         deployments = [deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")}) for deployment in result['data']]
         self.logger.debug(f"Retrieved {len(deployments)} deployments")
         
-
-        self.logger.debug(f"Retrieved {len(deployments)} deployments")
-
         # 총 페이지 계산
         total_count = result['page']['totalPages']
         total_page = (total_count + size - 1) // size  # 나눗셈 후 올림 처리

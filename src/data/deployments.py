@@ -4,6 +4,7 @@ from typing import List
 from model.deployments import Deployments
 from error import Missing
 from state import CANCLED, RESERVED
+from utils import build_filter_query, build_sort_query, calculate_pagination
 import datetime
 import logging
 logger = logging.getLogger("app.data.deployments")
@@ -39,29 +40,19 @@ async def fetch_deployments(conn: Connection, page: int, size:int, sort: List[st
 
     # filter 조건 생성
     allow_filter_columns = {
-        "hospitalId": "dm.hospitalId",
-        "versionId": "dv.versionId",
-        "deployStatus": "dm.deployStatus"
+        "deploymentId":"dm.deploymentId",
+        "hospitalId":"dm.hospitalId",
+        "versionId":"dv.versionId",
+        "versionName":"dv.versionName",
+        "reservationTime":"dm.reservationTime",
+        "deployStatus":"dm.deployStatus",
+        "createdAt":"dm.createdAt",
+        "updatedAt":"dm.updatedAt"
     }
 
     filter_result = "WHERE 1 "
     if filters:
-        filter_query_params = []  # 바인딩할 파라미터 값을 저장할 리스트
-        del_list = []
-        
-        for column, value in filters.items():
-            if column in allow_filter_columns:
-                placeholders = ", ".join(["%s"] * len(value))  # IN 절의 플레이스홀더 생성
-                filter_result += f"AND {allow_filter_columns[column]} IN ({placeholders}) "
-                filter_query_params.extend(value)  # 바인딩 값 추가
-            else:
-                del_list.append(column)
-
-        for li in del_list:
-            del filters[li]
-
-        logger.debug(f"Executing query: {filter_result}")
-        logger.debug(f"Executing query parameters: {filter_query_params}")
+        filter_result, filter_query_params = build_filter_query(filter_result=filter_result, filters=filters, allow_filter_columns=allow_filter_columns)
 
     allow_sort_columns={
         "deploymentId":"dm.deploymentId",
@@ -76,31 +67,20 @@ async def fetch_deployments(conn: Connection, page: int, size:int, sort: List[st
     allow_sort_directions=["desc","asc"]
 
     if sort:
-        sort_query_params = []
-        for item in sort:
-            column, direction = item.split(":")
-            # direction을 소문자로 변환 후 검증
-            direction = direction.lower()
-            if column in allow_sort_columns and direction in allow_sort_directions:
-                sort_query_params.append(f"{column} {direction.upper()}")
-        
-        sort_result = " ORDER BY "+", ".join(sort_query_params)
+        sort_result = build_sort_query(sort_result=sort, sorts=sort, allow_sort_columns=allow_sort_columns, allow_sort_directions=allow_sort_directions)
 
-    
-    # 함수로 만들 때 return ", ".join(sort_result)
-    logger.debug(f"Executing query: {sort_result}")
+    offset, limit = calculate_pagination(page=page, size=size)
 
-    offset = (page - 1) * size
-    limit = size
     offset_query = " LIMIT %s OFFSET %s"
     
+    # 전체 개수 가져오기
     count_query = """
         SELECT COUNT(*) 
         FROM deployments dm
         JOIN deployVersions dv 
         ON dm.versionId = dv.versionId
         """ + filter_result
-    # 전체 개수 가져오기
+    
     if filters :
         query_params = list(filter_query_params)
     else :
@@ -119,9 +99,6 @@ async def fetch_deployments(conn: Connection, page: int, size:int, sort: List[st
     logger.debug(f"Query returned {len(results)} rows")
 
     # 결과를 Deployments 모델 리스트로 변환
-    for row in results :
-        print(row)
-        print(type(row))
     deployments = [Deployments(**row) for row in results]
     logger.debug(f"Converted {len(deployments)} rows to Deployments models")
     
