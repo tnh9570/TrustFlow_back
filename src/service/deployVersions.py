@@ -3,6 +3,7 @@ from pymysql.connections import Connection
 from model.deployVersions import DeployVersions
 from error import Duplicate
 from typing import List
+from utils import parse_filters
 
 from data.deployVersions import (
     fetch_deployVersions,
@@ -17,7 +18,7 @@ class DeployVersions:
     def __init__(self):
         self.logger = logging.getLogger("app.service.DeployVersions")
 
-    async def list_deployVersions(self, column_name: list, conn: Connection) -> list[DeployVersions]:
+    async def list_deployVersions(self, column_name: list, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[DeployVersions]:
         """
         특정 컬럼 데이터를 기반으로 배포 버전을 조회하고, session_data를 병합하여 반환.
         
@@ -30,8 +31,10 @@ class DeployVersions:
         """
         self.logger.debug(f"Starting list_deployVersions service method for column_name: {column_name}")
         
+        query_filters = parse_filters(filters)
+
         self.logger.debug(f"Fetching fetch_deployVersions for column_name: {column_name}")
-        result = await fetch_deployVersions(column_name=column_name,conn=conn)
+        result = await fetch_deployVersions(column_name=column_name,conn=conn, page=page, size=size, sort=sort, filters=query_filters)
 
         self.logger.debug(f"Retrieved {len(result)} DeployVersions")
 

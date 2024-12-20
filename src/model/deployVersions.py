@@ -1,12 +1,13 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class DeployVersions(BaseModel):
-    versionId: str
+    versionId: int
     versionName: str
     filePath: str
     SHA1Value: str
     isNhnDeployment: bool
-    createdAt: str
+    createdAt: datetime
 
 class DeployVersionCreate(BaseModel):
     versionName: str

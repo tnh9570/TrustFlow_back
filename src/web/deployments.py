@@ -21,14 +21,6 @@ async def list_deployments(
     # 페이지네이션 파라미터
     page: int = Query(1, ge=1, description="Page number (default: 1)"),
     size: int = Query(15, ge=1, le=100, description="Number of items per page (default: 15)"),
-    
-    # 정렬 파라미터
-    # sort: Optional[List[str]] = Query(
-    #     ["deploymentId:desc"],
-    #     title="Sort Fields",
-    #     description="List of fields to sort by with order (e.g., deploymentId:desc,name:asc)"
-    # ),
-    # 필터 조건 (예: hospitalId:c00075,status:active)
     sort: List[str] = Query(["deploymentId:desc"], description="정렬 기준과 순서"),
     filters: Optional[List[str]] = Query(None, description="필터링 조건, 예: filter=status:success"),
 

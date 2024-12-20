@@ -1,27 +1,66 @@
+import logging
+
 from pymysql.connections import Connection
 from typing import List
 from model.excludedDirectories import ExcludedDirectories
-import logging
+from utils import build_filter_query, build_sort_query, calculate_pagination
 
 logger = logging.getLogger("app.data.excludedDirectories")
 
-async def get_excludedDirectories(conn: Connection) -> List[ExcludedDirectories]:
+async def get_excludedDirectories(conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[ExcludedDirectories]:
     logger.debug("Starting get_excludedDirectories data method")
-    query = f"""
+    base_query = f"""
     SELECT 
         *
     FROM excludedDirectories 
     """
+    filter_result = "WHERE 1 "
+    allow_filter_columns = {
+        "directoryId":"directoryId",
+        "directoryPath":"directoryPath",
+        "reason":"reason",
+        "crtime":"crtime",
+    }
+    if filters:
+        filter_result, filter_query_params = build_filter_query(filter_result=filter_result, filters=filters, allow_filter_columns=allow_filter_columns)
 
-    logger.debug(f"Executing query: {query}")
+    allow_sort_columns = allow_filter_columns
+    allow_sort_directions=["desc","asc"]
+
+    if sort:
+        sort_result = build_sort_query(sort_result=sort, sorts=sort, allow_sort_columns=allow_sort_columns, allow_sort_directions=allow_sort_directions)
+
+    offset, limit = calculate_pagination(page=page, size=size)
+
+    offset_query = " LIMIT %s OFFSET %s"
+    
+    # 전체 개수 가져오기
+    count_query = """
+        SELECT COUNT(*) 
+        FROM deployVersions 
+        """ + filter_result
+
+    if filters :
+        query_params = list(filter_query_params)
+    else :
+        query_params = []     
 
     with conn.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(count_query, query_params)
+        total_count = cursor.fetchone()['COUNT(*)']
+        logger.debug(f'total_count = {total_count}')
+
+    with conn.cursor() as cursor:
+        cursor.execute(base_query + filter_result + sort_result + offset_query, query_params + [limit, offset])
         results = cursor.fetchall()
 
     logger.debug(f"Query returned {len(results)} rows")
 
-    return [ExcludedDirectories(**row) for row in results]
+    excludedDirectories = [ExcludedDirectories(**row) for row in results]
+
+    logger.debug(f"Total count: {total_count}")
+
+    return {"data": excludedDirectories, "page": {"totalPages":total_count}}
 
 def create_excludedDirectories(directoryPath: str, reason: str, conn: Connection):
     """

@@ -17,7 +17,9 @@ def parse_filters(filters: List[str]) -> Dict[str, List[str]]:
                 raise ValueError(f"Invalid filter format: {filter_param}. Expected 'column:value'")
     return query_filters
 
-def build_filter_query(filter_result:str, filters:dict[List], allow_filter_columns:dict) :
+def build_filter_query(filter_result:str, 
+                       filters:dict[List], 
+                       allow_filter_columns:dict) :
     logger.debug(f"start build_filter_query")
     filter_query_params = []  # 바인딩할 파라미터 값을 저장할 리스트
     del_list = []
@@ -33,12 +35,15 @@ def build_filter_query(filter_result:str, filters:dict[List], allow_filter_colum
     for li in del_list:
         del filters[li]
 
-    logger.debug(f"Executing query: {filter_result}")
-    logger.debug(f"Executing query parameters: {filter_query_params}")
+    logger.debug(f"filter_result query: {filter_result}")
+    logger.debug(f"filter_result query parameters: {filter_query_params}")
 
     return filter_result, filter_query_params
 
-def build_sort_query(sort_result:str, sorts:List, allow_sort_columns:dict, allow_sort_directions:List[str]):
+def build_sort_query(sort_result:str, 
+                     sorts:List, 
+                     allow_sort_directions:List[str],
+                     allow_sort_columns:dict):
     logger.debug(f"start build_sort_query")
 
     sort_query_params = []
@@ -46,13 +51,14 @@ def build_sort_query(sort_result:str, sorts:List, allow_sort_columns:dict, allow
         column, direction = item.split(":")
         # direction을 소문자로 변환 후 검증
         direction = direction.lower()
+        # join이 아니면 allow_sort_columns를 검증할 필요가 없음
         if column in allow_sort_columns and direction in allow_sort_directions:
             sort_query_params.append(f"{column} {direction.upper()}")
     
     sort_result = " ORDER BY "+", ".join(sort_query_params)
 
-    logger.debug(f"Executing query: {sort_result}")
-    logger.debug(f"Executing query parameters: {sort_query_params}")
+    logger.debug(f"sort_result query: {sort_result}")
+    logger.debug(f"sort_result query parameters: {sort_query_params}")
 
     return sort_result
 

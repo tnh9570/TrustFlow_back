@@ -1,8 +1,10 @@
 # web/deployment.py
 import logging
+
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from service.deployVersions import DeployVersions
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
 from error import Duplicate
@@ -14,12 +16,18 @@ logger = logging.getLogger("app.web.deployVersions")
 @router.get("", include_in_schema=False)
 @router.get("/")
 async def list_deployVersions(
+    # 페이지네이션 파라미터
+    page: int = Query(1, ge=1, description="Page number (default: 1)"),
+    size: int = Query(15, ge=1, le=100, description="Number of items per page (default: 15)"),
+    sort: List[str] = Query(["versionId:desc"], description="정렬 기준과 순서"),
+    filters: Optional[List[str]] = Query(None, description="필터링 조건, 예: filter=status:success"),
+
     conn: Connection = Depends(get_mediploy_connection),
     service: DeployVersions = Depends()
 ):
     logger.debug(f"GET: list_deployVersions endpoint called")
 
-    result = await service.list_deployVersions(column_name=["versionId","versionName","filePath","SHA1Value","isNhnDeployment","createdAt"], conn=conn)
+    result = await service.list_deployVersions(column_name=["versionId","versionName","filePath","SHA1Value","isNhnDeployment","createdAt"], conn=conn, page=page, size=size, sort=sort, filters=filters)
     return result
 
 @router.get("/check", include_in_schema=False)

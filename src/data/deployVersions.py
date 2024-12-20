@@ -1,27 +1,69 @@
+import logging
+
 from pymysql.connections import Connection
 from typing import List
 from model.deployVersions import DeployVersions
+from utils import build_filter_query, build_sort_query, calculate_pagination
 
-import logging
 logger = logging.getLogger("app.data.deployVersions")
 
-async def fetch_deployVersions(column_name:list, conn: Connection) -> List[DeployVersions]:
+async def fetch_deployVersions(column_name:list, conn: Connection, page: int, size:int, sort: List[str], filters: dict[List]) -> List[DeployVersions]:
     logger.debug("Starting fetch_deployVersions data method")
-    query = f"""
+    base_query = f"""
     SELECT 
-        {",".join(column_name)}
+        *
     FROM deployVersions 
     """
 
-    logger.debug(f"Executing query: {query}")
+    filter_result = "WHERE 1 "
+    allow_filter_columns = {
+        "versionId":"versionId",
+        "versionName":"versionName",
+        "filePath":"filePath",
+        "SHA1Value":"SHA1Value",
+        "isNhnDeployment":"isNhnDeployment",
+        "createdAt":"createdAt"
+    }
+    if filters:
+        filter_result, filter_query_params = build_filter_query(filter_result=filter_result, filters=filters, allow_filter_columns=allow_filter_columns)
+
+    allow_sort_columns = allow_filter_columns
+    allow_sort_directions=["desc","asc"]
+
+    if sort:
+        sort_result = build_sort_query(sort_result=sort, sorts=sort, allow_sort_columns=allow_sort_columns, allow_sort_directions=allow_sort_directions)
+
+    offset, limit = calculate_pagination(page=page, size=size)
+
+    offset_query = " LIMIT %s OFFSET %s"
+    
+    # 전체 개수 가져오기
+    count_query = """
+        SELECT COUNT(*) 
+        FROM deployVersions 
+        """ + filter_result
+
+    if filters :
+        query_params = list(filter_query_params)
+    else :
+        query_params = []     
 
     with conn.cursor() as cursor:
-        cursor.execute(query)
+        cursor.execute(count_query, query_params)
+        total_count = cursor.fetchone()['COUNT(*)']
+        logger.debug(f'total_count = {total_count}')
+
+    with conn.cursor() as cursor:
+        cursor.execute(base_query + filter_result + sort_result + offset_query, query_params + [limit, offset])
         results = cursor.fetchall()
 
     logger.debug(f"Query returned {len(results)} rows")
 
-    return results
+    deployVersions = [DeployVersions(**row) for row in results]
+
+    logger.debug(f"Total count: {total_count}")
+
+    return {"data": deployVersions, "page": {"totalPages":total_count}}
 
 async def fetch_deployVersions_detail(versionName: str, conn: Connection):
     logger.debug("Starting fetch_deployVersions_detail data method")

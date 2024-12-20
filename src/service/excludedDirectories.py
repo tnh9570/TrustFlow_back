@@ -1,7 +1,8 @@
 import logging
 from pymysql.connections import Connection
 from model.excludedDirectories import ExcludedDirectories
-
+from typing import List
+from utils import parse_filters
 
 from data.excludedDirectories import (
     get_excludedDirectories,
@@ -14,7 +15,7 @@ class excludedDirectoriesService:
     def __init__(self):
         self.logger = logging.getLogger("app.service.excludedDirectories")
 
-    async def get_excludedDirectories(self, conn: Connection) -> list[ExcludedDirectories]:
+    async def get_excludedDirectories(self, conn: Connection, page: int, size: int, sort: List[str], filters: List[str]) -> list[ExcludedDirectories]:
         """
         배포제외디렉토리 리스트 불러오기
         
@@ -26,7 +27,9 @@ class excludedDirectoriesService:
         """
         self.logger.debug(f"Starting get_excludedDirectories service method")
         
-        result = await get_excludedDirectories(conn=conn)
+        query_filters = parse_filters(filters)
+
+        result = await get_excludedDirectories(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
 
         self.logger.debug(f"Retrieved {len(result)} excludedDirectories")
 

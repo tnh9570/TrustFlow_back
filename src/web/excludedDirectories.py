@@ -1,8 +1,10 @@
 # web/excludedDirectories.py
 import logging
+
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from service.excludedDirectories import excludedDirectoriesService
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
 from model.excludedDirectories import ExcludedDirectoriesCreate
@@ -13,12 +15,18 @@ logger = logging.getLogger("app.web.excludedDirectories")
 @router.get("", include_in_schema=False)
 @router.get("/")
 async def get_excludedDirectories(
+    # 페이지네이션 파라미터
+    page: int = Query(1, ge=1, description="Page number (default: 1)"),
+    size: int = Query(15, ge=1, le=100, description="Number of items per page (default: 15)"),
+    sort: List[str] = Query(["directoryId:desc"], description="정렬 기준과 순서"),
+    filters: Optional[List[str]] = Query(None, description="필터링 조건, 예: filter=status:success"),
+
     conn: Connection = Depends(get_mediploy_connection),
     service: excludedDirectoriesService = Depends()
 ):
     logger.debug(f"GET: list_excludedDirectories endpoint called")
 
-    result = await service.get_excludedDirectories(conn=conn)
+    result = await service.get_excludedDirectories(conn=conn, page=page, size=size, sort=sort, filters=filters)
     return result
 
 @router.post("/create", include_in_schema=False)
