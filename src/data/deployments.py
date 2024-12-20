@@ -101,11 +101,9 @@ async def fetch_deployments(conn: Connection, page: int, size:int, sort: List[st
     # 결과를 Deployments 모델 리스트로 변환
     deployments = [Deployments(**row) for row in results]
     logger.debug(f"Converted {len(deployments)} rows to Deployments models")
-    
-    
     logger.debug(f"Total count: {total_count}")
 
-    return {"data": deployments, "page": {"totalPages":total_count}}
+    return {"data": deployments, "page": {"totalPages":(total_count + size - 1) // size}}
 
 # @with_connection
 def fetch_deployment_detail(conn: Connection, deploymentId: int) -> Deployments:

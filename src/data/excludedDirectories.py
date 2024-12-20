@@ -60,7 +60,7 @@ async def get_excludedDirectories(conn: Connection, page: int, size:int, sort: L
 
     logger.debug(f"Total count: {total_count}")
 
-    return {"data": excludedDirectories, "page": {"totalPages":total_count}}
+    return {"data": excludedDirectories, "page": {"totalPages":(total_count + size - 1) // size}}
 
 def create_excludedDirectories(directoryPath: str, reason: str, conn: Connection):
     """

@@ -40,16 +40,12 @@ class DeploymentService:
         result = await fetch_deployments(conn=conn, page=page, size=size, sort=sort, filters=query_filters)
         self.logger.debug("complete fetch_deployments")
         # 리스트 컴프리헨션으로 병원 이름 매칭된 리스트 반환
-        deployments = [deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")}) for deployment in result['data']]
-        self.logger.debug(f"Retrieved {len(deployments)} deployments")
+        # deployments = [deployment.model_copy(update={"hospitalName": session_data.get(deployment.hospitalId, "알 수 없음")}) for deployment in result['data']]
+        for deployment in result["data"]:
+            hospital_name = session_data.get(deployment.hospitalId, "알 수 없음")
+            deployment.hospitalName = hospital_name  # 기존 객체에 속성 추가
         
-        # 총 페이지 계산
-        total_count = result['page']['totalPages']
-        total_page = (total_count + size - 1) // size  # 나눗셈 후 올림 처리
-        self.logger.debug(f"Total pages calculated: {total_page}")
-
-
-        return {"data":deployments,"page": {"totalPages":total_page}}
+        return {"data": result["data"], "page": result["page"]}
 
     async def deployment_detail(self,deploymentId: int, conn: Connection) -> Deployments | None:
         """

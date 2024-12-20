@@ -63,7 +63,7 @@ async def fetch_deployVersions(conn: Connection, page: int, size:int, sort: List
 
     logger.debug(f"Total count: {total_count}")
 
-    return {"data": deployVersions, "page": {"totalPages":total_count}}
+    return {"data": deployVersions, "page": {"totalPages":(total_count + size - 1) // size}}
 
 async def get_deployVersions_with_versionName(column_name: list, conn: Connection):
     logger.debug("Starting get_deployVersions_with_versionName data method")
