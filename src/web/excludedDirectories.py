@@ -85,7 +85,7 @@ async def delete_excludedDirectories(
     logger.info(f"delete_excludedDirectories endpoint called with request: {request}")
     try:
         await service.delete_excludedDirectories(
-            directoryId=request.directoryIds,
+            directoryIds=request.directoryIds,
             conn=conn
         )
         return {"message": "excludedDirectories reserved successfully"}

@@ -90,7 +90,7 @@ async def delete_deployVersions(
 ):  
     logger.debug(f"GET: delete_deployVersions endpoint called with DeployVersionDelete: {request}")
     try :
-        await service.delete_deployVersions(versionId=request.versionId, conn=conn)
+        await service.delete_deployVersions(versionId=request.versionIds, conn=conn)
     except Exception as e :
         raise HTTPException(status_code=404, detail=str(e)) 
     return "complete"

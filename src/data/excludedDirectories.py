@@ -105,7 +105,7 @@ def delete_excludedDirectories(directoryId: List[int], conn: Connection):
 
     placeholders = ",".join(["%s"] * len(directoryId))
 
-    query = """
+    query = f"""
     DELETE FROM excludedDirectories 
     WHERE directoryId IN ({placeholders}) ;
     """

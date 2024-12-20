@@ -105,7 +105,7 @@ async def fetch_deployVersions_detail(versionName: str, conn: Connection):
 async def insert_deployVersions(versionName: str, filpath: str, SHA1Value: str, conn: Connection):
     logger.debug("Starting insert_deployVersions data method")
     query = """
-    INSERT INTO deployVersions (versionName, SHA1Value, filpath)
+    INSERT INTO deployVersions (versionName, SHA1Value, filepath)
     VALUES (%s, %s, %s)
     """
 
