@@ -7,7 +7,7 @@ from service.excludedDirectories import excludedDirectoriesService
 from fastapi import APIRouter, Query
 from pymysql.connections import Connection
 from db.connections import get_mediploy_connection
-from model.excludedDirectories import ExcludedDirectoriesCreate
+from model.excludedDirectories import ExcludedDirectoriesCreate, ExcludedDirectoriesDelete
 
 router = APIRouter(prefix="/except")
 logger = logging.getLogger("app.web.excludedDirectories")
@@ -64,9 +64,10 @@ async def create_excludedDirectories(
         logger.error(f"Unexpected error: {e}")
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
     
-@router.delete("/delete/{directoryId}")
+@router.delete("/delete", include_in_schema=False)
+@router.delete("/delete/")
 async def delete_excludedDirectories(
-    directoryId: int,
+    request: ExcludedDirectoriesDelete,
     conn: Connection = Depends(get_mediploy_connection),
     service: excludedDirectoriesService = Depends()
 ):
@@ -74,17 +75,17 @@ async def delete_excludedDirectories(
     배포제외디렉토리 삭제 API 엔드포인트.
 
     Args:
-        directoryId (int): 삭제할 배포 디렉토리 Id
+        request.directoryIds (list[int]): 삭제할 배포 디렉토리 Id List
         conn (Connection): 데이터베이스 연결 객체.
         service (excludedDirectoriesService): 배포 서비스 객체.
 
     Returns:
         dict: 성공 메시지.
     """
-    logger.info("delete_excludedDirectories endpoint called")
+    logger.info(f"delete_excludedDirectories endpoint called with request: {request}")
     try:
         await service.delete_excludedDirectories(
-            directoryId=directoryId,
+            directoryId=request.directoryIds,
             conn=conn
         )
         return {"message": "excludedDirectories reserved successfully"}

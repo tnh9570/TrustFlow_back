@@ -10,3 +10,6 @@ class ExcludedDirectories(BaseModel):
 class ExcludedDirectoriesCreate(BaseModel):
     directoryPath: str
     reason: str
+
+class ExcludedDirectoriesDelete(BaseModel):
+    directoryIds: list[int]

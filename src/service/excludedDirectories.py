@@ -54,20 +54,20 @@ class excludedDirectoriesService:
             self.logger.error(f"Error in create_excludedDirectories: {e}")
             raise
     
-    async def delete_excludedDirectories(self, directoryId: int, conn: Connection):
+    async def delete_excludedDirectories(self, directoryIds: List[int], conn: Connection):
         """
-        배포제외디렉토리 추가 로직.
+        배포제외디렉토리 삭제 로직.
 
         Args:
             directoryId (str): 배포제외 디렉토리.
             conn (Connection): 데이터베이스 연결 객체.
         """
         self.logger.info(f"Starting delete_excludedDirectories service method. \
-                            Input data: directoryId={directoryId}")
+                            Input data: directoryId={directoryIds}")
         
         # 데이터 계층 호출
         try:
-            delete_excludedDirectories(directoryId, conn)
+            delete_excludedDirectories(directoryIds, conn)
         except Exception as e:
             self.logger.error(f"Error in delete_excludedDirectories: {e}")
             raise

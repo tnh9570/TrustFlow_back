@@ -91,7 +91,7 @@ def create_excludedDirectories(directoryPath: str, reason: str, conn: Connection
         logger.error(f"Database error: {e}")
         raise
 
-def delete_excludedDirectories(directoryId: int, conn: Connection):
+def delete_excludedDirectories(directoryId: List[int], conn: Connection):
     """ 
     배포제외 디렉토리 삭제
     Args:
@@ -101,20 +101,22 @@ def delete_excludedDirectories(directoryId: int, conn: Connection):
     Returns:
 
     """
-
     logger.debug("Starting delete_excludedDirectories data method")
 
+    placeholders = ",".join(["%s"] * len(directoryId))
+
     query = """
-    DELETE FROM excludedDirectories WHERE directoryId= %s;
+    DELETE FROM excludedDirectories 
+    WHERE directoryId IN ({placeholders}) ;
     """
-    logger.debug(
-        f"Executing query: {query} with parameters: {directoryId}"
-    )
+
+    logger.debug(f"Executing query with parameters: directoryId={directoryId}")
+    
     try:
         with conn.cursor() as cursor:
-            cursor.execute(query, (directoryId, ))
+            cursor.execute(query, tuple(directoryId))
         conn.commit()
-        logger.info("excludedDirectories delete successfully.")
+        logger.info("excludedDirectories delete successfully for directoryId={directoryId}")
     except Exception as e:
         logger.error(f"Database error: {e}")
         raise
